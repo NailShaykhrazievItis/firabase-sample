@@ -40,6 +40,8 @@
 
         <activity android:name=".activity.SignUpActivity" />
 
+        <activity android:name=".activity.ResetPasswordActivity"/>
+
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
