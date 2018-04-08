@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -40,7 +41,7 @@ public class SignInActivity extends AppCompatActivity
     private SignInButton googleSignInButton;
     private TextInputLayout tiEmail, tiPassword;
     private EditText etEmail, etPassword;
-    private Button btnSignIn, btnSignUp, btnResetPassword;
+    private Button btnSignIn, btnSignUp, btnResetPassword, buttonSignInPhone;
     private ProgressBar progressBar;
     private View container;
 
@@ -138,6 +139,9 @@ public class SignInActivity extends AppCompatActivity
                         }
                     });
         });
+
+        buttonSignInPhone.setOnClickListener(v ->
+                startActivity(new Intent(this, SignInWithPhoneActivity.class)));
     }
 
     private void initFields() {
@@ -150,6 +154,7 @@ public class SignInActivity extends AppCompatActivity
         etPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
         btnResetPassword = findViewById(R.id.btn_reset_password);
+        buttonSignInPhone = findViewById(R.id.btn_login_with_phone);
     }
 
     private void initGoogleAuth() {

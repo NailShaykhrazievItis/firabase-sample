@@ -17,27 +17,26 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_dashboard_pink_700_24dp" />
+
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="firebasesimple.android.itis.com"
-                    android:scheme="https"
                     android:pathPrefix="/message"
-                    />
+                    android:scheme="https" />
             </intent-filter>
         </activity>
-
         <activity android:name=".activity.SignInActivity" />
-
         <activity android:name=".activity.SignUpActivity" />
 
         <service
@@ -47,7 +46,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:name=".service.MyFirebaseInstanceIdService"
             android:exported="false">
@@ -55,9 +53,12 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="b1c12a468344b719d929ab7ff88a7f6d812a199e" />
+
+        <activity android:name=".activity.SignInWithPhoneActivity"></activity>
     </application>
 
 </manifest>

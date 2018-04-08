@@ -63,13 +63,36 @@
             android:background="@color/colorAccent"
             android:text="@string/btn_login" />
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            android:visibility="visible" />
+            android:orientation="horizontal">
+
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/btn_login_with_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@null"
+                android:shadowDx="10dp"
+                android:shadowDy="10dp"
+                android:text="@string/sign_in_with_phone_number"
+                android:textAllCaps="false"
+                android:textColor="@color/colorAccent" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_reset_password"

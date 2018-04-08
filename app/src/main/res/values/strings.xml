@@ -25,4 +25,9 @@
     <string name="error_pass">Enter password!</string>
     <string name="error_pass_length">Password too short, enter minimum 6 characters!</string>
     <string name="error_signin">Sign In Error</string>
+    <string name="sign_in_with_phone_number">Sign In with phone number</string>
+    <string name="nickname">Nickname</string>
+    <string name="hint_phone">Phone number</string>
+    <string name="send_code">Send code</string>
+    <string name="code">Code</string>
 </resources>
