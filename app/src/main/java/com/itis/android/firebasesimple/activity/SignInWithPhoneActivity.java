@@ -2,7 +2,6 @@ package com.itis.android.firebasesimple.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -13,16 +12,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken;
 import com.google.firebase.auth.PhoneAuthProvider.OnVerificationStateChangedCallbacks;
 import com.itis.android.firebasesimple.R;
 import com.itis.android.firebasesimple.utils.SoftKeyboard;
@@ -39,6 +34,8 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
     private Button btnSendCode, btnSignIn;
     private ProgressBar progressBar;
     private View container;
+    private String verId;
+    private ForceResendingToken mToken;
 
     private FirebaseAuth auth;
     private boolean verificationInProgress = false;
@@ -55,28 +52,24 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
         initTextListeners();
         initClickListeners();
         initCallbacks();
+        modePhoneNumber();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         if (verificationInProgress) {
-            PhoneAuthProvider.getInstance().verifyPhoneNumber(etPhone.getText().toString().trim(), 10, TimeUnit.MINUTES,
-                    this,
-                    callbacks);
-            verificationInProgress = true;
+            startVerification(etPhone.getText().toString());
         }
     }
 
     private void initViews() {
         tiCode = findViewById(R.id.ti_code);
         etCode = findViewById(R.id.et_code);
-        tiCode.setVisibility(View.GONE);
         tiPhone = findViewById(R.id.ti_phone);
         etPhone = findViewById(R.id.et_phone);
         btnSendCode = findViewById(R.id.btn_send_code);
         btnSignIn = findViewById(R.id.btn_signin);
-        btnSignIn.setVisibility(View.GONE);
         progressBar = findViewById(R.id.progressBar);
         container = findViewById(R.id.container);
     }
@@ -119,7 +112,6 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
 
     private void initClickListeners() {
         btnSendCode.setOnClickListener(l -> {
-
             String phone = etPhone.getText().toString().trim();
             if (TextUtils.isEmpty(phone)) {
                 tiPhone.setError("Enter phone number!");
@@ -127,9 +119,12 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
             }
             progressBar.setVisibility(View.VISIBLE);
             SoftKeyboard.hide(container);
-            PhoneAuthProvider.getInstance().verifyPhoneNumber(phone, 10, TimeUnit.MINUTES, this, callbacks);
-            verificationInProgress = true;
+            startVerification(phone);
+            modeVerificationCode();
         });
+
+        btnSignIn.setOnClickListener(l ->
+                signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verId, etCode.getText().toString())));
     }
 
     private void initCallbacks() {
@@ -145,6 +140,14 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
             public void onVerificationFailed(FirebaseException e) {
                 Log.wtf(TAG, "onVerificationFailed", e);
                 verificationInProgress = false;
+            }
+
+            @Override
+            public void onCodeSent(final String verificationId, final ForceResendingToken token) {
+                Log.i(TAG, "onCodeSent:" + verificationId);
+                verId = verificationId;
+                mToken = token;
+                modeVerificationCode();
             }
         };
     }
@@ -181,5 +184,24 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void modePhoneNumber() {
+        tiPhone.setVisibility(View.VISIBLE);
+        btnSendCode.setVisibility(View.VISIBLE);
+        tiCode.setVisibility(View.GONE);
+        btnSignIn.setVisibility(View.GONE);
+    }
+
+    private void modeVerificationCode() {
+        tiPhone.setVisibility(View.GONE);
+        btnSendCode.setVisibility(View.GONE);
+        tiCode.setVisibility(View.VISIBLE);
+        btnSignIn.setVisibility(View.VISIBLE);
+    }
+
+    private void startVerification(String phone) {
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(phone, 120, TimeUnit.SECONDS, this, callbacks);
+        verificationInProgress = true;
     }
 }

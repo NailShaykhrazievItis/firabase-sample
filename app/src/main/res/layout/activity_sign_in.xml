@@ -87,8 +87,6 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:background="@null"
-                android:shadowDx="10dp"
-                android:shadowDy="10dp"
                 android:text="@string/sign_in_with_phone_number"
                 android:textAllCaps="false"
                 android:textColor="@color/colorAccent" />
