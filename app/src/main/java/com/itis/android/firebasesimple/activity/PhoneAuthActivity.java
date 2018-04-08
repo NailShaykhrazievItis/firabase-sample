@@ -183,9 +183,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
             case R.id.button_resend:
                 resendVerificationCode(mPhoneNumberField.getText().toString(), mResendToken);
                 break;
-            case R.id.sign_out_button:
-                signOut();
-                break;
         }
     }
 
@@ -198,7 +195,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
 
     private void initFields() {
         mPhoneNumberViews = findViewById(R.id.phone_auth_fields);
-        mSignedInViews = findViewById(R.id.signed_in_buttons);
 
         mStatusText = findViewById(R.id.status);
         mDetailText = findViewById(R.id.detail);
@@ -209,7 +205,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         mStartButton = findViewById(R.id.button_start_verification);
         mVerifyButton = findViewById(R.id.button_verify_phone);
         mResendButton = findViewById(R.id.button_resend);
-        mSignOutButton = findViewById(R.id.sign_out_button);
     }
 
     private void startPhoneNumberVerification(String phoneNumber) {

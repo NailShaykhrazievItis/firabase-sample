@@ -101,6 +101,7 @@ public class SignInActivity extends AppCompatActivity
                 startActivity(new Intent(this, SignUpActivity.class)));
 
         btnResetPassword.setOnClickListener(v -> {
+            startActivity(new Intent(this, RestorePassActivity.class));
         });
 
         btnSignInPhone.setOnClickListener(view ->
