@@ -1,6 +1,8 @@
 package com.itis.android.firebasesimple.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -11,8 +13,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.PhoneAuthProvider.OnVerificationStateChangedCallbacks;
@@ -24,13 +32,16 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
 
     private static final String TAG = "SignInWithPhoneActivity";
 
+    private static final String KEY_VERIFY_IN_PROGRESS = "ver in progress";
+
     private TextInputLayout tiCode, tiPhone;
-    private EditText etPhone;
-    private Button btnSendCode;
+    private EditText etPhone, etCode;
+    private Button btnSendCode, btnSignIn;
     private ProgressBar progressBar;
     private View container;
 
     private FirebaseAuth auth;
+    private boolean verificationInProgress = false;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks;
 
     @Override
@@ -41,15 +52,31 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         initViews();
-
         initTextListeners();
+        initClickListeners();
+        initCallbacks();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (verificationInProgress) {
+            PhoneAuthProvider.getInstance().verifyPhoneNumber(etPhone.getText().toString().trim(), 10, TimeUnit.MINUTES,
+                    this,
+                    callbacks);
+            verificationInProgress = true;
+        }
     }
 
     private void initViews() {
         tiCode = findViewById(R.id.ti_code);
+        etCode = findViewById(R.id.et_code);
+        tiCode.setVisibility(View.GONE);
         tiPhone = findViewById(R.id.ti_phone);
         etPhone = findViewById(R.id.et_phone);
         btnSendCode = findViewById(R.id.btn_send_code);
+        btnSignIn = findViewById(R.id.btn_signin);
+        btnSignIn.setVisibility(View.GONE);
         progressBar = findViewById(R.id.progressBar);
         container = findViewById(R.id.container);
     }
@@ -71,6 +98,23 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
                 tiPhone.setError(null);
             }
         });
+
+        etCode.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                tiCode.setError(null);
+            }
+        });
     }
 
     private void initClickListeners() {
@@ -84,6 +128,7 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             SoftKeyboard.hide(container);
             PhoneAuthProvider.getInstance().verifyPhoneNumber(phone, 10, TimeUnit.MINUTES, this, callbacks);
+            verificationInProgress = true;
         });
     }
 
@@ -92,13 +137,49 @@ public class SignInWithPhoneActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential credential) {
                 Log.i(TAG, "onVerificationCompleted:" + credential);
-
+                verificationInProgress = false;
+                signInWithPhoneAuthCredential(credential);
             }
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
-
+                Log.wtf(TAG, "onVerificationFailed", e);
+                verificationInProgress = false;
             }
         };
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_VERIFY_IN_PROGRESS, verificationInProgress);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        verificationInProgress = savedInstanceState.getBoolean(KEY_VERIFY_IN_PROGRESS);
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCredential:success");
+                        Intent intent = new Intent(SignInWithPhoneActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        // ...
+                    } else {
+                        // Sign in failed, display a message and update the UI
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                            // The verification code entered was invalid
+                            tiCode.setError("Invalid verification code");
+                        }
+                    }
+                });
     }
 }
