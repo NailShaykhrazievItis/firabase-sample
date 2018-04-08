@@ -98,12 +98,11 @@ public class SignInActivity extends AppCompatActivity
                 startActivity(new Intent(SignInActivity.this, SignUpActivity.class)));
 
         btnResetPassword.setOnClickListener(v -> {
-            etPassword.setText("");
+            startActivity(new Intent(this, ResetPasswordActivity.class));
         });
-
+        
         btnSignInPhoneNumber.setOnClickListener(v -> {
-            startActivity(new Intent(SignInActivity.this, SignInPhoneNumberActivity.class));
-        });
+          startActivity(new Intent(SignInActivity.this, SignInPhoneNumberActivity.class));
 
         btnSignIn.setOnClickListener(v -> {
             String email = etEmail.getText().toString();

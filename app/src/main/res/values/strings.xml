@@ -30,6 +30,14 @@
     <string name="error_pass">Enter password!</string>
     <string name="error_pass_length">Password too short, enter minimum 6 characters!</string>
     <string name="error_signin">Sign In Error</string>
+
     <string name="verification_failed">Verification failed!</string>
     <string name="error_phone_number">Enter phone number!</string>
+
+    <string name="reset_instruction">To reset password, enter your email, press the button and check mail to follow instruction</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="back">Back</string>
+    <string name="enter_email">Enter your email!</string>
+    <string name="check_email">Check email to reset your password!</string>
+    <string name="fail_send_email">Fail to send reset password email!</string>
 </resources>
