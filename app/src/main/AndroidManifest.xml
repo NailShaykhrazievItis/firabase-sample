@@ -62,7 +62,7 @@
             android:name=".activity.PhoneAuthActivity"
             android:label="@string/label_phone_auth"
             android:windowSoftInputMode="adjustPan" />
-
+        <activity android:name=".activity.RestorePassActivity"></activity>
     </application>
 
 </manifest>

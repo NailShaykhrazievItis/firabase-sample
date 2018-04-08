@@ -42,4 +42,7 @@
     <string name="label_phone_auth">Phone Number Authentication</string>
 
     <string name="instant_validation">(instant validation)</string>
+    <string name="reset_password">RESET PASSWORD</string>
+    <string name="reset_password_complete_msg">Password reset email was send.Check your email please!</string>
+    <string name="error">Error</string>
 </resources>
