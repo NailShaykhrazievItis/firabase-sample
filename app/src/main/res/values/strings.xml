@@ -24,5 +24,22 @@
     <string name="error_email">Enter email address!</string>
     <string name="error_pass">Enter password!</string>
     <string name="error_pass_length">Password too short, enter minimum 6 characters!</string>
-    <string name="error_signin">Sign In Error</string>
+    <string name="error_sign_in">Sign In Error</string>
+    <string name="btn_sign_in_phone">Phone number login</string>
+
+
+    <string name="signed_out">Signed Out</string>
+    <string name="start_phone_auth">Start</string>
+    <string name="verify_phone_auth">Verify</string>
+    <string name="resend_phone_auth">Resend</string>
+    <string name="hint_phone_number">Phone Number</string>
+    <string name="hint_verification_code">Verification Code</string>
+    <string name="status_code_sent">Code Sent</string>
+    <string name="status_verification_failed">Verification failed</string>
+    <string name="status_verification_succeeded">Verification succeeded</string>
+
+    <string name="phone_title_text">Phone Number</string>
+    <string name="label_phone_auth">Phone Number Authentication</string>
+
+    <string name="instant_validation">(instant validation)</string>
 </resources>
