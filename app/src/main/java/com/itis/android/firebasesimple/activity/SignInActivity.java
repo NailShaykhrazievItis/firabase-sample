@@ -40,7 +40,7 @@ public class SignInActivity extends AppCompatActivity
     private SignInButton googleSignInButton;
     private TextInputLayout tiEmail, tiPassword;
     private EditText etEmail, etPassword;
-    private Button btnSignIn, btnSignUp, btnResetPassword;
+    private Button btnSignIn, btnSignInPhoneNumber, btnSignUp, btnResetPassword;
     private ProgressBar progressBar;
     private View container;
 
@@ -90,14 +90,19 @@ public class SignInActivity extends AppCompatActivity
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+        Snackbar.make(container, "Google Play Services error.", Snackbar.LENGTH_SHORT).show();
     }
 
     private void initClickListeners() {
         btnSignUp.setOnClickListener(v ->
-                startActivity(new Intent(this, SignUpActivity.class)));
+                startActivity(new Intent(SignInActivity.this, SignUpActivity.class)));
 
         btnResetPassword.setOnClickListener(v -> {
+            etPassword.setText("");
+        });
+
+        btnSignInPhoneNumber.setOnClickListener(v -> {
+            startActivity(new Intent(SignInActivity.this, SignInPhoneNumberActivity.class));
         });
 
         btnSignIn.setOnClickListener(v -> {
@@ -143,6 +148,7 @@ public class SignInActivity extends AppCompatActivity
     private void initFields() {
         container = findViewById(R.id.container);
         btnSignIn = findViewById(R.id.btn_login);
+        btnSignInPhoneNumber = findViewById(R.id.sign_in_phone_number_button);
         btnSignUp = findViewById(R.id.btn_to_signup);
         tiEmail = findViewById(R.id.ti_email);
         tiPassword = findViewById(R.id.ti_password);
@@ -172,7 +178,7 @@ public class SignInActivity extends AppCompatActivity
         if (authResult != null) {
             // Welcome the user
             FirebaseUser user = authResult.getUser();
-            Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
+            Snackbar.make(container, "Welcome " + user.getEmail(), Snackbar.LENGTH_SHORT).show();
 
             // Go back to the main activity
             startActivity(new Intent(this, MainActivity.class));
@@ -214,7 +220,12 @@ public class SignInActivity extends AppCompatActivity
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if (etEmail.getText().toString().length() > 0 &&
+                        etPassword.getText().toString().length() > 0) {
+                    btnSignIn.setEnabled(true);
+                } else {
+                    btnSignIn.setEnabled(false);
+                }
             }
 
             @Override
@@ -230,7 +241,12 @@ public class SignInActivity extends AppCompatActivity
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if (etEmail.getText().toString().length() > 0 &&
+                        etPassword.getText().toString().length() > 0) {
+                    btnSignIn.setEnabled(true);
+                } else {
+                    btnSignIn.setEnabled(false);
+                }
             }
 
             @Override

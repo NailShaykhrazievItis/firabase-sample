@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="24dp"
             android:text="@string/sign_in"
             android:textSize="26sp"
             android:textStyle="bold" />
@@ -56,10 +56,20 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
+            android:id="@+id/btn_reset_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@null"
+            android:text="@string/btn_forgot_password"
+            android:textAllCaps="false"
+            android:textColor="@color/colorAccent" />
+
+        <Button
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:background="@color/colorAccent"
             android:text="@string/btn_login" />
 
@@ -68,16 +78,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:visibility="visible" />
 
         <Button
-            android:id="@+id/btn_reset_password"
+            android:id="@+id/sign_in_phone_number_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:visibility="visible"
+            android:text="@string/sign_in_phone_number"
             android:background="@null"
-            android:text="@string/btn_forgot_password"
             android:textAllCaps="false"
             android:textColor="@color/colorAccent" />
 
