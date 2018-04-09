@@ -27,6 +27,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -151,7 +152,12 @@ public class MainActivity extends AppCompatActivity implements
                 photoUrl = firebaseUser.getPhotoUrl().toString();
             }
             if (username == null || username.isEmpty()) {
-                username = firebaseUser.getEmail();
+                if (TextUtils.isEmpty(firebaseUser.getEmail())) {
+                    username = firebaseUser.getPhoneNumber();
+                }
+                else {
+                    username = firebaseUser.getEmail();
+                }
             }
         }
 
