@@ -59,6 +59,7 @@
             android:value="b1c12a468344b719d929ab7ff88a7f6d812a199e" />
 
         <activity android:name=".activity.SignInWithPhoneActivity"></activity>
+        <activity android:name=".activity.PasswordResetActivity"></activity>
     </application>
 
 </manifest>

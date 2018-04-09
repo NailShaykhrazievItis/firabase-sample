@@ -30,4 +30,8 @@
     <string name="hint_phone">Phone number</string>
     <string name="send_code">Send code</string>
     <string name="code">Code</string>
+    <string name="password_reset">Password reset</string>
+    <string name="phone_number">Phone number</string>
+    <string name="please_enter_e_mail_or_phone_number_to_reset_your_password">Please enter e-mail or phone number to reset your password</string>
+    <string name="send">send</string>
 </resources>
