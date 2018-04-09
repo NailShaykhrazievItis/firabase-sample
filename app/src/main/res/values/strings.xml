@@ -25,4 +25,14 @@
     <string name="error_pass">Enter password!</string>
     <string name="error_pass_length">Password too short, enter minimum 6 characters!</string>
     <string name="error_signin">Sign In Error</string>
+    <string name="btn_sign_in_phone_number">Sign in via phone number</string>
+    <string name="text_reset_password_instruction">Write your email to reset password</string>
+    <string name="back">Back</string>
+    <string name="check_email">Check your email</string>
+    <string name="hint_phone_number">Phone number</string>
+    <string name="btn_sign_in">Sign in</string>
+    <string name="write_code">Write code from SMS</string>
+    <string name="OK">OK</string>
+    <string name="verification_code">code</string>
+    <string name="empty" />
 </resources>

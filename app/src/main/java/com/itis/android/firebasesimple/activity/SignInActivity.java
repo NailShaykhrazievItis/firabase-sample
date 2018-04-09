@@ -40,7 +40,7 @@ public class SignInActivity extends AppCompatActivity
     private SignInButton googleSignInButton;
     private TextInputLayout tiEmail, tiPassword;
     private EditText etEmail, etPassword;
-    private Button btnSignIn, btnSignUp, btnResetPassword;
+    private Button btnSignIn, btnSignUp, btnResetPassword, btnSignUnViaPhoneNumber;
     private ProgressBar progressBar;
     private View container;
 
@@ -98,6 +98,11 @@ public class SignInActivity extends AppCompatActivity
                 startActivity(new Intent(this, SignUpActivity.class)));
 
         btnResetPassword.setOnClickListener(v -> {
+            startActivity(new Intent(this, ResetPasswordActivity.class));
+        });
+
+        btnSignUnViaPhoneNumber.setOnClickListener(v -> {
+            startActivity(new Intent(this, SignInViaPhoneNumberActivity.class));
         });
 
         btnSignIn.setOnClickListener(v -> {
@@ -150,6 +155,7 @@ public class SignInActivity extends AppCompatActivity
         etPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
         btnResetPassword = findViewById(R.id.btn_reset_password);
+        btnSignUnViaPhoneNumber = findViewById(R.id.btn_sign_up_via_phone_number);
     }
 
     private void initGoogleAuth() {
