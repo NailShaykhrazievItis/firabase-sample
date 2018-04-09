@@ -133,7 +133,7 @@ public class SignInActivity extends AppCompatActivity
                         progressBar.setVisibility(View.GONE);
                         if (!task.isSuccessful()) {
                             // there was an error
-                            if (password.length() < 6) {
+                            if (password.length() < 4) {
                                 tiPassword.setError(getString(R.string.error_pass_length));
                             } else {
                                 Snackbar.make(container, R.string.error_sign_in, Snackbar.LENGTH_SHORT).show();

@@ -112,7 +112,7 @@ public class SignUpActivity extends AppCompatActivity {
                 tiPassword.setError(getString(R.string.error_pass));
                 return;
             }
-            if (password.length() < 6) {
+            if (password.length() < 4) {
                 tiPassword.setError(getString(R.string.error_pass_length));
                 return;
             }

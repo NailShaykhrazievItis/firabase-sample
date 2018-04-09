@@ -50,7 +50,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
     private ViewGroup mPhoneNumberViews;
-    private ViewGroup mSignedInViews;
 
     private TextView mStatusText;
     private TextView mDetailText;
@@ -61,7 +60,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     private Button mStartButton;
     private Button mVerifyButton;
     private Button mResendButton;
-    private Button mSignOutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,7 +188,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         mStartButton.setOnClickListener(this);
         mVerifyButton.setOnClickListener(this);
         mResendButton.setOnClickListener(this);
-        mSignOutButton.setOnClickListener(this);
     }
 
     private void initFields() {
@@ -240,26 +237,23 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     // [START sign_in_with_phone]
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCredential:success");
 
-                            FirebaseUser user = task.getResult().getUser();
+                        FirebaseUser user = task.getResult().getUser();
 
-                            updateUI(STATE_SIGN_IN_SUCCESS, user);
-                        } else {
-                            // Sign in failed, display a message and update the UI
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                // The verification code entered was invalid
-                                mVerificationField.setError("Invalid code.");
-                            }
-                            // Update UI
-                            updateUI(STATE_SIGN_IN_FAILED);
+                        updateUI(STATE_SIGN_IN_SUCCESS, user);
+                    } else {
+                        // Sign in failed, display a message and update the UI
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                            // The verification code entered was invalid
+                            mVerificationField.setError("Invalid code.");
                         }
+                        // Update UI
+                        updateUI(STATE_SIGN_IN_FAILED);
                     }
                 });
     }
@@ -339,8 +333,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         if (user == null) {
             // Signed out
             mPhoneNumberViews.setVisibility(View.VISIBLE);
-            mSignedInViews.setVisibility(View.GONE);
-
             mStatusText.setText(R.string.signed_out);
         } else {
             // Signed in

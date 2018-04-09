@@ -26,7 +26,7 @@ public class RestorePassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restore_pass);
 
-        resetPassEditText = findViewById(R.id.et_reset_pass);
+        resetPassEditText = findViewById(R.id.edt_reset_pass);
         resetPassButton = findViewById(R.id.btn_reset_pass);
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -40,18 +40,15 @@ public class RestorePassActivity extends AppCompatActivity {
                     resetPassEditText.setError("Please enter your email");
                 }
                 else {
-                    firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull final Task<Void> task) {
-                            if(task.isSuccessful()) {
-                                Toast.makeText(getApplicationContext(),
-                                        getString(R.string.reset_password_complete_msg), Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(RestorePassActivity.this, SignInActivity.class));
-                                finish();
-                            }
-                            else {
-                                Toast.makeText(getApplicationContext(), getString(R.string.error), Toast.LENGTH_SHORT).show();
-                            }
+                    firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                        if(task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.reset_password_complete_msg), Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(RestorePassActivity.this, SignInActivity.class));
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), getString(R.string.error), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
