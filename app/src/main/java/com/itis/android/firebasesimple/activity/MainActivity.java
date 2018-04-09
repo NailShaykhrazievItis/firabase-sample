@@ -150,8 +150,11 @@ public class MainActivity extends AppCompatActivity implements
             if (firebaseUser.getPhotoUrl() != null) {
                 photoUrl = firebaseUser.getPhotoUrl().toString();
             }
-            if (username.isEmpty()) {
-                username = firebaseUser.getEmail();
+            if(firebaseUser.getPhoneNumber() != null) {
+                username = firebaseUser.getPhoneNumber();
+            }
+            if (firebaseUser.getEmail() != null) {
+                    username = firebaseUser.getEmail();
             }
         }
 
@@ -282,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements
         // Define default config values. Defaults are used when fetched config values are not
         // available. Eg: if an error occurred fetching values from the server.
         Map<String, Object> defaultConfigMap = new HashMap<>();
-        defaultConfigMap.put("friendly_msg_length", 10L);
+        defaultConfigMap.put("friendly_msg_length", 35L);
 
         // Apply config settings and default values.
         firebaseRemoteConfig.setConfigSettings(firebaseRemoteConfigSettings);
