@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.itis.android.firebasesimple.utils;
+package com.itis.android.firebasesimple.model
 
-public class Preferences {
+class Message {
 
-    public static final String INSTANCE_ID_TOKEN_RETRIEVED = "iid_token_retrieved";
-    public static final String FRIENDLY_MSG_LENGTH = "friendly_msg_length";
+    var id: String? = null
+    var text: String? = null
+    var name: String? = null
+    var photoUrl: String? = null
+    var imageUrl: String? = null
+
+    constructor() {}
+
+    constructor(text: String?, name: String?, photoUrl: String?, imageUrl: String) {
+        this.text = text
+        this.name = name
+        this.photoUrl = photoUrl
+        this.imageUrl = imageUrl
+    }
 }
