@@ -142,14 +142,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         linearLayoutManager!!.stackFromEnd = true
 
         firebaseDatabaseReference = FirebaseDatabase.getInstance().reference
-//        val parser = { dataSnapshot ->
-//            val message = dataSnapshot.getValue(Message::class.java)
-//            if (message != null) {
-//                message!!.id = dataSnapshot.getKey()
-//            }
-//            message
-//        }
-
         val parser = { dataSnapshot: DataSnapshot ->
             val message = dataSnapshot.getValue(Message::class.java)
             if (message != null) {
@@ -157,7 +149,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
             }
             message!!
         }
-
         val messagesRef = firebaseDatabaseReference!!.child(MESSAGES_CHILD)
         val options = FirebaseRecyclerOptions.Builder<Message>()
                 .setQuery(messagesRef, parser)
