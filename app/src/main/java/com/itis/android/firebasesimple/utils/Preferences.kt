@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.itis.android.firebasesimple.utils;
+package com.itis.android.firebasesimple.utils
 
-public class Preferences {
+object Preferences {
 
-    public static final String INSTANCE_ID_TOKEN_RETRIEVED = "iid_token_retrieved";
-    public static final String FRIENDLY_MSG_LENGTH = "friendly_msg_length";
+    val INSTANCE_ID_TOKEN_RETRIEVED = "iid_token_retrieved"
+    val FRIENDLY_MSG_LENGTH = "friendly_msg_length"
 }
