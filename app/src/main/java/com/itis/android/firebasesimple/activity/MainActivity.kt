@@ -35,7 +35,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -62,7 +61,6 @@ import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.builders.Indexables
-import com.google.firebase.appindexing.builders.PersonBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -305,7 +303,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         sendButton = findViewById(R.id.sendButton)
         sendButton!!.setOnClickListener { view ->
             val message = Message(messageEditText!!.text.toString(), username!!,
-                    photoUrl!!, null!!)
+                    photoUrl!!, null)
             firebaseDatabaseReference!!.child(MESSAGES_CHILD).push().setValue(message)
             messageEditText!!.setText("")
             firebaseAnalytics!!.logEvent(MESSAGE_SENT_EVENT, null)

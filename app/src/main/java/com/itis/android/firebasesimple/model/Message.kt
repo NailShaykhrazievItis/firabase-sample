@@ -25,7 +25,7 @@ class Message {
 
     constructor() {}
 
-    constructor(text: String, name: String, photoUrl: String, imageUrl: String) {
+    constructor(text: String, name: String, photoUrl: String, imageUrl: String?) {
         this.text = text
         this.name = name
         this.photoUrl = photoUrl
