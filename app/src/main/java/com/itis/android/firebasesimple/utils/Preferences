@@ -1,0 +1,2 @@
+const INSTANCE_ID_TOKEN_RETRIEVED = "iid_token_retrieved"
+const FRIENDLY_MSG_LENGTH = "friendly_msg_length"

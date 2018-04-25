@@ -35,15 +35,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
         // Handle data payload of FCM messages.
-        Log.d(TAG, "FCM Message Id: " + remoteMessage!!.messageId!!)
-        Log.d(TAG, "FCM Notification Message: " + remoteMessage.notification!!)
-        Log.d(TAG, "FCM Data Message: " + remoteMessage.data)
+        Log.d(TAG, "FCM Message Id: ${remoteMessage?.messageId}")
+        Log.d(TAG, "FCM Notification Message: ${remoteMessage?.notification}")
+        Log.d(TAG, "FCM Data Message: ${remoteMessage?.data}")
 
-        sendNotification(remoteMessage.notification!!.body)
+        sendNotification(remoteMessage?.notification?.body)
     }
 
     private fun sendNotification(messageBody: String?) {
-        val intent = Intent(this, MainActivity::class as Class<*>)
+        val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0,
                 intent, PendingIntent.FLAG_ONE_SHOT)
@@ -60,17 +60,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
 
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId,
                     getString(R.string.channel_title),
                     NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManager.createNotificationChannel(channel)
+            notificationManager?.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(0, notificationBuilder.build())
+        notificationManager?.notify(0, notificationBuilder.build())
     }
 
     companion object {
