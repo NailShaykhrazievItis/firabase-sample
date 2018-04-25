@@ -152,9 +152,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         firebaseDatabaseReference = FirebaseDatabase.getInstance().reference
         val parser = SnapshotParser {
             val message = it.value as? Message
-            message?.let { it2 ->
-                it2.id = it.key
-            }
+            message.id = it.key
             message
         }
 
@@ -166,62 +164,61 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                 .build()
         }
 
-        firebaseAdapter = object : FirebaseRecyclerAdapter<Message, MessageViewHolder>(options) {
+        options?.let {
+            firebaseAdapter = object : FirebaseRecyclerAdapter<Message, MessageViewHolder>(it) {
+                override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): MessageViewHolder {
+                    val inflater = LayoutInflater.from(viewGroup.context)
+                    return MessageViewHolder(inflater.inflate(R.layout.item_message, viewGroup, false))
+                }
 
-            override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): MessageViewHolder {
-                val inflater = LayoutInflater.from(viewGroup.context)
-                return MessageViewHolder(inflater.inflate(R.layout.item_message, viewGroup, false))
-            }
-
-            override fun onBindViewHolder(viewHolder: MessageViewHolder,
-                    position: Int,
-                    message: Message) {
-
-                progressBar.visibility = ProgressBar.INVISIBLE
-                if (message.text != null) {
-                    viewHolder.messageTextView.text = message.text
-                    viewHolder.messageTextView.visibility = TextView.VISIBLE
-                    viewHolder.messageImageView.visibility = ImageView.GONE
-                } else {
-                    val imageUrl = message.imageUrl.toString()
-                    if (imageUrl.startsWith("gs://")) {
-                        val storageReference = FirebaseStorage.getInstance()
-                                .getReferenceFromUrl(imageUrl)
-                        storageReference.downloadUrl.addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                val downloadUrl = it.result.toString()
-                                Glide.with(viewHolder.messageImageView.context)
-                                        .load(downloadUrl)
-                                        .into(viewHolder.messageImageView)
-                            } else {
-                                Log.w(TAG, "Getting download url was not successful.",
-                                        it.exception)
-                            }
-                        }
+                override fun onBindViewHolder(viewHolder: MessageViewHolder,
+                        position: Int, message: Message) {
+                    progressBar.visibility = ProgressBar.INVISIBLE
+                    if (message.text != null) {
+                        viewHolder.messageTextView.text = message.text
+                        viewHolder.messageTextView.visibility = TextView.VISIBLE
+                        viewHolder.messageImageView.visibility = ImageView.GONE
                     } else {
-                        Glide.with(viewHolder.messageImageView.context)
-                                .load(message.imageUrl)
-                                .into(viewHolder.messageImageView)
+                        val imageUrl = message.imageUrl.toString()
+                        if (imageUrl.startsWith("gs://")) {
+                            val storageReference = FirebaseStorage.getInstance()
+                                    .getReferenceFromUrl(imageUrl)
+                            storageReference.downloadUrl.addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    val downloadUrl = it.result.toString()
+                                    Glide.with(viewHolder.messageImageView.context)
+                                            .load(downloadUrl)
+                                            .into(viewHolder.messageImageView)
+                                } else {
+                                    Log.w(TAG, "Getting download url was not successful.",
+                                            it.exception)
+                                }
+                            }
+                        } else {
+                            Glide.with(viewHolder.messageImageView.context)
+                                    .load(message.imageUrl)
+                                    .into(viewHolder.messageImageView)
+                        }
+                        viewHolder.messageImageView.visibility = ImageView.VISIBLE
+                        viewHolder.messageTextView.visibility = TextView.GONE
                     }
-                    viewHolder.messageImageView.visibility = ImageView.VISIBLE
-                    viewHolder.messageTextView.visibility = TextView.GONE
+
+
+                    viewHolder.messengerTextView.text = message.name
+                    if (message.photoUrl == null) {
+                        viewHolder.messengerImageView.setImageDrawable(ContextCompat.getDrawable(this@MainActivity,
+                                R.drawable.ic_account_circle_black_36dp))
+                    } else {
+                        Glide.with(this@MainActivity)
+                                .load(message.photoUrl)
+                                .into(viewHolder.messengerImageView)
+                    }
+                    // write this message to the on-device index
+                    FirebaseAppIndex.getInstance().update(getMessageIndexable(message))
+
+                    // log a view action on it
+                    FirebaseUserActions.getInstance().end(getMessageViewAction(message))
                 }
-
-
-                viewHolder.messengerTextView.text = message.name
-                if (message.photoUrl == null) {
-                    viewHolder.messengerImageView.setImageDrawable(ContextCompat.getDrawable(this@MainActivity,
-                            R.drawable.ic_account_circle_black_36dp))
-                } else {
-                    Glide.with(this@MainActivity)
-                            .load(message.photoUrl)
-                            .into(viewHolder.messengerImageView)
-                }
-                // write this message to the on-device index
-                FirebaseAppIndex.getInstance().update(getMessageIndexable(message))
-
-                // log a view action on it
-                FirebaseUserActions.getInstance().end(getMessageViewAction(message))
             }
         }
 
