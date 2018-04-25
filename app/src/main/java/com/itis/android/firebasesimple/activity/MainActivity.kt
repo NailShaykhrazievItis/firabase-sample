@@ -151,12 +151,16 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
 
         firebaseDatabaseReference = FirebaseDatabase.getInstance().reference
         val parser = SnapshotParser {
-            val message = it.value as Message
-            message.id = it.key
+            val message = it.value as? Message
+            message?.let { it2 ->
+                it2.id = it.key
+            }
             message
         }
-        val messagesRef = firebaseDatabaseReference?.child(MESSAGES_CHILD) as Query //с as? всё ломается :(
-        val options = messagesRef.let {
+
+        val messagesRef = firebaseDatabaseReference?.child(MESSAGES_CHILD) as? Query//с as? всё
+        // ломается :(
+        val options = messagesRef?.let {
             FirebaseRecyclerOptions.Builder<Message>()
                 .setQuery(it, parser)
                 .build()
@@ -450,7 +454,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                 payload.putString(FirebaseAnalytics.Param.VALUE, "inv_sent")
 
                 // Check how many invitations were sent and log.
-                val ids = data?.let { AppInviteInvitation.getInvitationIds(resultCode, it) }
+                val ids = data?.let {
+                    AppInviteInvitation.getInvitationIds(resultCode, it) }
                 Log.d(TAG, "Invitations sent: ${(ids?.size ?: "")}")
             } else {
                 // Use Firebase Measurement to log that invitation was not sent
