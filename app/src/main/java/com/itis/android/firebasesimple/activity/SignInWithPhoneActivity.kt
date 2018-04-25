@@ -16,7 +16,7 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
 import com.google.firebase.auth.PhoneAuthProvider.OnVerificationStateChangedCallbacks
 import com.itis.android.firebasesimple.R
-import com.itis.android.firebasesimple.utils.SoftKeyboard
+import com.itis.android.firebasesimple.utils.hide
 import kotlinx.android.synthetic.main.activity_sign_in_with_phone.*
 import java.util.concurrent.TimeUnit
 
@@ -82,7 +82,7 @@ class SignInWithPhoneActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             progressBar.visibility = View.VISIBLE
-            SoftKeyboard.hide(container)
+            hide(container)
             startVerification(phone)
             modeVerificationCode()
         }
@@ -93,25 +93,25 @@ class SignInWithPhoneActivity : AppCompatActivity() {
     }
 
     private fun initCallbacks() =
-          object : OnVerificationStateChangedCallbacks() {
-            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                Log.i(TAG, "onVerificationCompleted:$credential")
-                verificationInProgress = false
-                signInWithPhoneAuthCredential(credential)
-            }
+            object : OnVerificationStateChangedCallbacks() {
+                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                    Log.i(TAG, "onVerificationCompleted:$credential")
+                    verificationInProgress = false
+                    signInWithPhoneAuthCredential(credential)
+                }
 
-            override fun onVerificationFailed(e: FirebaseException) {
-                Log.wtf(TAG, "onVerificationFailed", e)
-                verificationInProgress = false
-            }
+                override fun onVerificationFailed(e: FirebaseException) {
+                    Log.wtf(TAG, "onVerificationFailed", e)
+                    verificationInProgress = false
+                }
 
-            override fun onCodeSent(verificationId: String?, token: ForceResendingToken?) {
-                Log.i(TAG, "onCodeSent:$verificationId")
-                verId = verificationId
-                mToken = token
-                modeVerificationCode()
+                override fun onCodeSent(verificationId: String?, token: ForceResendingToken?) {
+                    Log.i(TAG, "onCodeSent:$verificationId")
+                    verId = verificationId
+                    mToken = token
+                    modeVerificationCode()
+                }
             }
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

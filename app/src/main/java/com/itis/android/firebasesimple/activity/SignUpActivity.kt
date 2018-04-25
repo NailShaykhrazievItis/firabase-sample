@@ -12,8 +12,7 @@ import android.widget.Toast
 
 import com.google.firebase.auth.FirebaseAuth
 import com.itis.android.firebasesimple.R
-import com.itis.android.firebasesimple.utils.SoftKeyboard
-import kotlinx.android.synthetic.main.activity_sign_in.btn_to_signup
+import com.itis.android.firebasesimple.utils.hide
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 /**
@@ -67,7 +66,7 @@ class SignUpActivity : AppCompatActivity() {
     private fun initClickListeners() {
         btn_to_signin.setOnClickListener { finish() }
 
-        btn_to_signup.setOnClickListener {
+        btn_signup.setOnClickListener {
             val email = et_email.text.toString().trim { it <= ' ' }
             val password = et_password.text.toString().trim { it <= ' ' }
             if (TextUtils.isEmpty(email)) {
@@ -83,7 +82,7 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             progressBar.visibility = View.VISIBLE
-            SoftKeyboard.hide(container)
+            hide(container)
             //create user
             auth?.createUserWithEmailAndPassword(email, password)?.addOnCompleteListener(this@SignUpActivity) {
                 Toast.makeText(this@SignUpActivity,

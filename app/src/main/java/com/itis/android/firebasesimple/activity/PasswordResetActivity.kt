@@ -1,30 +1,16 @@
 package com.itis.android.firebasesimple.activity
 
 import android.support.design.widget.Snackbar
-import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.itis.android.firebasesimple.R
-import com.itis.android.firebasesimple.utils.SoftKeyboard
-import kotlinx.android.synthetic.main.activity_password_reset.btn_send_SMS
-import kotlinx.android.synthetic.main.activity_password_reset.btn_send_email
-import kotlinx.android.synthetic.main.activity_password_reset.container
-import kotlinx.android.synthetic.main.activity_password_reset.et_email
-import kotlinx.android.synthetic.main.activity_password_reset.et_phone
-import kotlinx.android.synthetic.main.activity_password_reset.progressBar
-import kotlinx.android.synthetic.main.activity_password_reset.ti_email
-import kotlinx.android.synthetic.main.activity_password_reset.ti_phone
+import com.itis.android.firebasesimple.utils.hide
+import kotlinx.android.synthetic.main.activity_password_reset.*
 
 class PasswordResetActivity : AppCompatActivity() {
 
@@ -49,7 +35,7 @@ class PasswordResetActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             progressBar.visibility = View.VISIBLE
-            SoftKeyboard.hide(container)
+            hide(container)
 
             val auth = FirebaseAuth.getInstance()
 

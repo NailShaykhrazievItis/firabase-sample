@@ -38,8 +38,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -50,7 +48,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.firebase.ui.database.SnapshotParser
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.ConnectionResult
@@ -63,7 +60,6 @@ import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
@@ -73,7 +69,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.itis.android.firebasesimple.R
 import com.itis.android.firebasesimple.model.Message
-import com.itis.android.firebasesimple.utils.Preferences
+import com.itis.android.firebasesimple.utils.FRIENDLY_MSG_LENGTH
 
 import java.util.HashMap
 
@@ -272,7 +268,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         fetchConfig()
 
         messageEditText.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(sharedPreferences?.
-                getInt(Preferences.FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT) ?: 0
+                getInt(FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT) ?: 0
         ))
         messageEditText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}

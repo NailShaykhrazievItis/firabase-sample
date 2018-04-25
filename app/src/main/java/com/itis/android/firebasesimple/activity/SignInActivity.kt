@@ -3,33 +3,24 @@ package com.itis.android.firebasesimple.activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.view.View.OnClickListener
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.Toast
 
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.itis.android.firebasesimple.R
-import com.itis.android.firebasesimple.utils.SoftKeyboard
+import com.itis.android.firebasesimple.utils.hide
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
 class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
@@ -98,7 +89,7 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
             }
 
             progressBar.visibility = View.VISIBLE
-            SoftKeyboard.hide(container)
+            hide(container)
 
             //authenticate user
             firebaseAuth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener(this@SignInActivity) {
