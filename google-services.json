@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "532477195680-kf50mb22a5pign5dv49dbnjbqi8e4fqa.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.itis.android.firebasesimple",
-            "certificate_hash": "9c75544818327a1ea582c59756498d4d5bc1faf7"
-          }
-        },
-        {
           "client_id": "532477195680-qiiq34b4nqt4dn127sa5thj9n2aruegs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
