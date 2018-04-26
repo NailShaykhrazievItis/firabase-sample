@@ -1,51 +1,34 @@
 package com.itis.android.firebasesimple.activity
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.itis.android.firebasesimple.R
-import com.itis.android.firebasesimple.utils.SoftKeyboard
+import com.itis.android.firebasesimple.utils.hide
+import kotlinx.android.synthetic.main.activity_sign_in.*
 
 class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
 
-    private var googleSignInButton: SignInButton? = null
-    private var tiEmail: TextInputLayout? = null
-    private var tiPassword: TextInputLayout? = null
-    private var etEmail: EditText? = null
-    private var etPassword: EditText? = null
-    private var btnSignIn: Button? = null
-    private var btnSignUp: Button? = null
-    private var btnResetPassword: Button? = null
-    private var btnSignInPhone: Button? = null
-    private var progressBar: ProgressBar? = null
-    private var container: View? = null
+    companion object {
+        private const val TAG = "SignInActivity"
+        private const val RC_SIGN_IN = 9001
+    }
 
     private var googleApiClient: GoogleApiClient? = null
     private var firebaseAuth: FirebaseAuth? = null
@@ -59,12 +42,11 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
         // Initialize FirebaseAuth
         firebaseAuth = FirebaseAuth.getInstance()
 
-        if (firebaseAuth!!.currentUser != null) {
+        if (firebaseAuth?.currentUser != null) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
 
-        initFields()
         initClickListeners()
         initTextListeners()
     }
@@ -77,7 +59,7 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
             if (result.isSuccess) {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = result.signInAccount
-                firebaseAuthWithGoogle(account!!)
+                account?.let { firebaseAuthWithGoogle(it) }
             } else {
                 // Google Sign In failed
                 Log.e(TAG, "Google Sign In failed.")
@@ -93,42 +75,42 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
     }
 
     private fun initClickListeners() {
-        btnSignUp!!.setOnClickListener { v -> startActivity(Intent(this, SignUpActivity::class.java)) }
+        btn_to_signup.setOnClickListener { startActivity(Intent(this, SignUpActivity::class.java)) }
 
-        btnResetPassword!!.setOnClickListener { v -> startActivity(Intent(this, RestorePassActivity::class.java)) }
+        btn_reset_password.setOnClickListener { startActivity(Intent(this, RestorePassActivity::class.java)) }
 
-        btnSignInPhone!!.setOnClickListener { view -> startActivity(Intent(this, PhoneAuthActivity::class.java)) }
+        btn_sign_in_phone.setOnClickListener { startActivity(Intent(this, PhoneAuthActivity::class.java)) }
 
-        btnSignIn!!.setOnClickListener { v ->
-            val email = etEmail!!.text.toString()
-            val password = etPassword!!.text.toString()
+        btn_login.setOnClickListener {
+            val email = email.text.toString()
+            val password = password.text.toString()
 
             if (TextUtils.isEmpty(email)) {
-                tiEmail!!.error = getString(R.string.error_email)
+                ti_email.error = getString(R.string.error_email)
                 return@setOnClickListener
             }
 
             if (TextUtils.isEmpty(password)) {
-                tiPassword!!.error = getString(R.string.error_pass)
+                ti_password.error = getString(R.string.error_pass)
                 return@setOnClickListener
             }
 
-            progressBar!!.visibility = View.VISIBLE
-            SoftKeyboard.hide(container!!)
+            progressBar.visibility = View.VISIBLE
+            hide(container)
 
             //authenticate user
-            firebaseAuth!!.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this@SignInActivity) { task ->
+            firebaseAuth?.signInWithEmailAndPassword(email, password)
+                    ?.addOnCompleteListener(this@SignInActivity) {
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-                        progressBar!!.visibility = View.GONE
-                        if (!task.isSuccessful) {
+                        progressBar.visibility = View.GONE
+                        if (!it.isSuccessful) {
                             // there was an error
                             if (password.length < 4) {
-                                tiPassword!!.error = getString(R.string.error_pass_length)
+                                ti_password.error = getString(R.string.error_pass_length)
                             } else {
-                                Snackbar.make(container!!, R.string.error_sign_in, Snackbar.LENGTH_SHORT).show()
+                                Snackbar.make(container, R.string.error_sign_in, Snackbar.LENGTH_SHORT).show()
                             }
                         } else {
                             val intent = Intent(this@SignInActivity, MainActivity::class.java)
@@ -139,24 +121,9 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
         }
     }
 
-    private fun initFields() {
-        container = findViewById(R.id.container)
-        btnSignIn = findViewById(R.id.btn_login)
-        btnSignUp = findViewById(R.id.btn_to_signup)
-        tiEmail = findViewById(R.id.ti_email)
-        tiPassword = findViewById(R.id.ti_password)
-        etEmail = findViewById(R.id.email)
-        etPassword = findViewById(R.id.password)
-        progressBar = findViewById(R.id.progressBar)
-        btnResetPassword = findViewById(R.id.btn_reset_password)
-        btnSignInPhone = findViewById(R.id.sign_in_phone_button)
-    }
-
     private fun initGoogleAuth() {
-        // Assign fields
-        googleSignInButton = findViewById(R.id.sign_in_button)
         // Set click listeners
-        googleSignInButton!!.setOnClickListener { v -> signIn() }
+        btn_sign_in.setOnClickListener { signIn() }
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -171,7 +138,7 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
         if (authResult != null) {
             // Welcome the user
             val user = authResult.user
-            Toast.makeText(this, "Welcome " + user.email!!, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Welcome ${user.email}", Toast.LENGTH_SHORT).show()
 
             // Go back to the main activity
             startActivity(Intent(this, MainActivity::class.java))
@@ -179,16 +146,16 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
     }
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
+        Log.d(TAG, "firebaseAuthWithGoogle: ${acct.id}")
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
-        firebaseAuth!!.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful)
+        firebaseAuth?.signInWithCredential(credential)
+                ?.addOnCompleteListener(this) {
+                    Log.d(TAG, "signInWithCredential:onComplete:" + it.isSuccessful)
                     // If sign in fails, display a message to the user. If sign in succeeds
                     // the auth state listener will be notified and logic to handle the
                     // signed in user can be handled in the listener.
-                    if (!task.isSuccessful) {
-                        Log.w(TAG, "signInWithCredential", task.exception)
+                    if (!it.isSuccessful) {
+                        Log.w(TAG, "signInWithCredential", it.exception)
                         Toast.makeText(this@SignInActivity, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
                     } else {
@@ -204,7 +171,7 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
     }
 
     private fun initTextListeners() {
-        etEmail!!.addTextChangedListener(object : TextWatcher {
+        email.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
             }
@@ -214,10 +181,10 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
             }
 
             override fun afterTextChanged(s: Editable) {
-                tiEmail!!.error = null
+                ti_email.error = null
             }
         })
-        etPassword!!.addTextChangedListener(object : TextWatcher {
+        password.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
             }
@@ -227,14 +194,8 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
             }
 
             override fun afterTextChanged(s: Editable) {
-                tiPassword!!.error = null
+                ti_password.error = null
             }
         })
-    }
-
-    companion object {
-
-        private val TAG = "SignInActivity"
-        private val RC_SIGN_IN = 9001
     }
 }
