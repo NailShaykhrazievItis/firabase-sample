@@ -37,7 +37,6 @@ class SignInWithPhoneActivity : AppCompatActivity() {
 
         initTextListeners()
         initClickListeners()
-//        initCallbacks()
         modePhoneNumber()
     }
 
