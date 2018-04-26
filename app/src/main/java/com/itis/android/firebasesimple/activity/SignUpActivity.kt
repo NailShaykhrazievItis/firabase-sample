@@ -9,10 +9,9 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
-import com.itis.android.firebasesimple.R
-
 import com.google.firebase.auth.FirebaseAuth
-import com.itis.android.firebasesimple.utils.SoftKeyboard
+import com.itis.android.firebasesimple.R
+import com.itis.android.firebasesimple.utils.hide
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 /**
@@ -69,9 +68,9 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun initClickListeners() {
-        btn_to_signin.setOnClickListener { v -> finish() }
+        btn_to_signin.setOnClickListener { finish() }
 
-        btn_signup.setOnClickListener { v ->
+        btn_signup.setOnClickListener {
             val email = email.text.toString().trim { it <= ' ' }
             val password = password.text.toString().trim { it <= ' ' }
             if (TextUtils.isEmpty(email)) {
@@ -84,19 +83,19 @@ class SignUpActivity : AppCompatActivity() {
                 ti_password.error = getString(R.string.error_pass_length)
             }
             progressBar.visibility = View.VISIBLE
-            SoftKeyboard.hide(container)
+            hide(container)
             //create user
             auth?.createUserWithEmailAndPassword(email, password)
-                    ?.addOnCompleteListener(this@SignUpActivity) { task ->
+                    ?.addOnCompleteListener(this@SignUpActivity) {
                         Toast.makeText(this@SignUpActivity,
-                                "createUserWithEmail:onComplete:" + task.isSuccessful, Toast.LENGTH_SHORT).show()
+                                "createUserWithEmail:onComplete:" + it.isSuccessful, Toast.LENGTH_SHORT).show()
                         progressBar.visibility = View.GONE
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-                        if (!task.isSuccessful) {
-                            if (task.exception != null)
-                                Snackbar.make(container, "Authentication failed." + task.exception, Snackbar.LENGTH_SHORT)
+                        if (!it.isSuccessful) {
+                            if (it.exception != null)
+                                Snackbar.make(container, "Authentication failed." + it.exception, Snackbar.LENGTH_SHORT)
                                         .show()
                         } else {
                             startActivity(Intent(this@SignUpActivity, MainActivity::class.java))

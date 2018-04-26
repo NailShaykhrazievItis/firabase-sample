@@ -24,17 +24,17 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        btn_reset_password!!.setOnClickListener(View.OnClickListener {
-            val email = email!!.text.toString().trim { it <= ' ' }
+        btn_reset_password.setOnClickListener(View.OnClickListener {
+            val email = email.text.toString().trim { it <= ' ' }
 
             if (TextUtils.isEmpty(email)) {
                 Toast.makeText(applicationContext, getString(R.string.enter_email), Toast.LENGTH_SHORT).show()
                 return@OnClickListener
             }
 
-            mAuth!!.sendPasswordResetEmail(email)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
+            mAuth?.sendPasswordResetEmail(email)?.
+                    addOnCompleteListener {
+                        if (it.isSuccessful) {
                             Toast.makeText(this@ResetPasswordActivity, getString(R.string.check_email), Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(this@ResetPasswordActivity, getString(R.string.fail_send_email), Toast.LENGTH_SHORT).show()
@@ -42,6 +42,6 @@ class ResetPasswordActivity : AppCompatActivity() {
                     }
         })
 
-        btn_back!!.setOnClickListener { finish() }
+        btn_back.setOnClickListener { finish() }
     }
 }

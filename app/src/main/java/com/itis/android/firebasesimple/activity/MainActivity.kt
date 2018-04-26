@@ -32,18 +32,11 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
-
 import com.bumptech.glide.Glide
 import com.crashlytics.android.Crashlytics
-import com.firebase.ui.common.BaseSnapshotParser
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.firebase.ui.database.SnapshotParser
@@ -60,7 +53,6 @@ import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -69,13 +61,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.itis.android.firebasesimple.R
 import com.itis.android.firebasesimple.model.Message
-import com.itis.android.firebasesimple.utils.Preferences
-
-import java.util.HashMap
-
+import com.itis.android.firebasesimple.utils.FRIENDLY_MSG_LENGTH
 import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_message.view.*
+import java.util.*
 
 class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
 
@@ -121,15 +111,15 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
             finish()
             return
         } else {
-            username = firebaseUser?.displayName
+            username = firebaseUser?.displayName.toString()
             if (firebaseUser?.photoUrl != null) {
-                photoUrl = firebaseUser?.photoUrl?.toString()
+                photoUrl = firebaseUser?.photoUrl.toString()
             }
-            if (username != null) {
-                if (username?.isEmpty()!!) {
-                    username = firebaseUser?.email
-                }
+
+            if (username.toString().isEmpty()) {
+                username = firebaseUser?.email.toString()
             }
+
         }
 
         googleApiClient = GoogleApiClient.Builder(this)
@@ -141,12 +131,10 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         linearLayoutManager?.stackFromEnd = true
 
         firebaseDatabaseReference = FirebaseDatabase.getInstance().reference
-        val parser = SnapshotParser { dataSnapshot ->
-            val message = dataSnapshot.getValue(Message::class.java)
-            if (message != null) {
-                message.id = dataSnapshot.key
-            }
-            message!!
+        val parser = SnapshotParser {
+            val message = it.value as? Message ?:Message()
+            message.id = it.key
+            message
         }
         val messagesRef = firebaseDatabaseReference?.child(MESSAGES_CHILD)
         if (messagesRef != null) {
@@ -165,7 +153,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                                               position: Int,
                                               message: Message) {
 
-                    progressBar.visibility = ProgressBar.INVISIBLE
+                    progressBar.visibility = View.INVISIBLE
                     if (message.text != null) {
                         viewHolder.messageTextView.text = message.text
                         viewHolder.messageTextView.visibility = TextView.VISIBLE
@@ -176,15 +164,15 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                             if (imageUrl.startsWith("gs://")) {
                                 val storageReference = FirebaseStorage.getInstance()
                                         .getReferenceFromUrl(imageUrl)
-                                storageReference.downloadUrl.addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        val downloadUrl = task.result.toString()
+                                storageReference.downloadUrl.addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        val downloadUrl = it.result.toString()
                                         Glide.with(viewHolder.messageImageView.context)
                                                 .load(downloadUrl)
                                                 .into(viewHolder.messageImageView)
                                     } else {
                                         Log.w(TAG, "Getting download url was not successful.",
-                                                task.exception)
+                                                it.exception)
                                     }
                                 }
                             } else {
@@ -265,10 +253,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         fetchConfig()
 
         messageEditText.filters = sharedPreferences?.getInt(
-                Preferences.FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT)
-                ?.let {
-                    InputFilter.LengthFilter(it)
-                }?.let { arrayOf<InputFilter>(it) }
+                FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT)?.let {
+                     InputFilter.LengthFilter(it) }?.let { arrayOf<InputFilter>(it) }
 
         messageEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
@@ -280,14 +266,14 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
             override fun afterTextChanged(editable: Editable) {}
         })
 
-        addMessageImageView.setOnClickListener { view ->
+        addMessageImageView.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "image/*"
             startActivityForResult(intent, REQUEST_IMAGE)
         }
 
-        sendButton.setOnClickListener { view ->
+        sendButton.setOnClickListener {
             if (username != null) {
                 val message = Message(messageEditText.text.toString(), username.toString(), photoUrl.toString(), "")
                 firebaseDatabaseReference
@@ -360,12 +346,10 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         when (item.itemId) {
             R.id.invite_menu -> {
                 sendInvitation()
-                return true
             }
             R.id.crash_menu -> {
                 Log.w("Crashlytics", "Crash button clicked")
                 causeCrash()
-                return true
             }
             R.id.sign_out_menu -> {
                 firebaseAuth?.signOut()
@@ -375,14 +359,13 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                 photoUrl = null
                 startActivity(Intent(this, SignInActivity::class.java))
                 finish()
-                return true
             }
             R.id.fresh_config_menu -> {
                 fetchConfig()
-                return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
+        return true
     }
 
     private fun causeCrash() {
@@ -403,8 +386,10 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         var cacheExpiration: Long = 3600 // 1 hour in seconds
         // If developer mode is enabled reduce cacheExpiration to 0 so that each fetch goes to the
         // server. This should not be used in release builds.
-        if (firebaseRemoteConfig?.info?.configSettings?.isDeveloperModeEnabled!!) {
-            cacheExpiration = 0
+        firebaseRemoteConfig?.info?.configSettings?.let {
+            if(it.isDeveloperModeEnabled) {
+                cacheExpiration = 0
+            }
         }
         firebaseRemoteConfig?.fetch(cacheExpiration)
                 ?.addOnSuccessListener { aVoid ->
@@ -453,7 +438,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
 
                 // Check how many invitations were sent and log.
                 val ids = AppInviteInvitation.getInvitationIds(resultCode, data)
-                Log.d(TAG, "Invitations sent: " + ids.size)
+                Log.d(TAG, "Invitations sent: ${ids.size}")
             } else {
                 // Use Firebase Measurement to log that invitation was not sent
                 val payload = Bundle()
@@ -468,16 +453,16 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
 
     private fun putImageInStorage(storageReference: StorageReference, uri: Uri?, key: String) {
         if (uri != null) {
-            storageReference.putFile(uri).addOnCompleteListener(this@MainActivity) { task ->
-                if (task.isSuccessful && task.result != null) {
-                    val message = Message(null, username, photoUrl, task.result.downloadUrl.toString())
+            storageReference.putFile(uri).addOnCompleteListener(this@MainActivity) {
+                if (it.isSuccessful && it.result != null) {
+                    val message = Message(null, username, photoUrl, it.result.downloadUrl.toString())
                     firebaseDatabaseReference
                             ?.child(MESSAGES_CHILD)
                             ?.child(key)
                             ?.setValue(message)
                 } else {
                     Log.w(TAG, "Image upload task was not successful.",
-                            task.exception)
+                            it.exception)
                 }
             }
         }

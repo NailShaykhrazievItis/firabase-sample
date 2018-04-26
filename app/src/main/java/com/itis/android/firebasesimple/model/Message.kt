@@ -15,20 +15,9 @@
  */
 package com.itis.android.firebasesimple.model
 
-class Message {
+data class Message(var id: String? = null, val text: String? = null,
+                   val name: String? = null, val photoUrl: String? = null, val imageUrl:String? = null) {
 
-    var id: String? = null
-    var text: String? = null
-    var name: String? = null
-    var photoUrl: String? = null
-    var imageUrl: String? = null
-
-    constructor() {}
-
-    constructor(text: String?, name: String?, photoUrl: String?, imageUrl: String) {
-        this.text = text
-        this.name = name
-        this.photoUrl = photoUrl
-        this.imageUrl = imageUrl
-    }
+    constructor(text: String?, name: String?, photoUrl: String?,imageUrl: String?) : this()
 }
+
