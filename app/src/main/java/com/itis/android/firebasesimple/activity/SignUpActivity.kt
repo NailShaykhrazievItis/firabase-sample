@@ -50,7 +50,7 @@ class SignUpActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable) {
-                ti_email!!.error = null
+                ti_email.error = null
             }
         })
         password.addTextChangedListener(object : TextWatcher {
@@ -63,7 +63,7 @@ class SignUpActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable) {
-                ti_password!!.error = null
+                ti_password.error = null
             }
         })
     }
@@ -73,7 +73,7 @@ class SignUpActivity : AppCompatActivity() {
 
         btn_signup.setOnClickListener { v ->
             val email = email.text.toString().trim { it <= ' ' }
-            val password = password!!.text.toString().trim { it <= ' ' }
+            val password = password.text.toString().trim { it <= ' ' }
             if (TextUtils.isEmpty(email)) {
                 ti_email.error = getString(R.string.error_email)
                 return@setOnClickListener
@@ -87,7 +87,7 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             progressBar.visibility = View.VISIBLE
-            hide(container!!)
+            hide(container)
             //create user
             auth?.createUserWithEmailAndPassword(email, password)
                     ?.addOnCompleteListener(this@SignUpActivity) {
@@ -98,7 +98,7 @@ class SignUpActivity : AppCompatActivity() {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!it.isSuccessful) {
-                            Snackbar.make(container!!, "Authentication failed." + it.exception, Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(container, "Authentication failed." + it.exception, Snackbar.LENGTH_SHORT).show()
                         } else {
                             startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
                             finish()

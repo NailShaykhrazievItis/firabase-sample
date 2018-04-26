@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         } else {
             username = firebaseUser?.displayName.toString()
             if (firebaseUser?.photoUrl != null) {
-                photoUrl = firebaseUser?.photoUrl!!.toString()
+                photoUrl = firebaseUser?.photoUrl.toString()
             }
             if (firebaseUser?.phoneNumber != null) {
                 username = firebaseUser?.phoneNumber.toString()
@@ -184,18 +184,18 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                         viewHolder.messageImageView.visibility = ImageView.GONE
                     } else {
                         val imageUrl = message.imageUrl
-                        if (imageUrl!!.startsWith("gs://")) {
+                        if (imageUrl.startsWith("gs://")) {
                             val storageReference = FirebaseStorage.getInstance()
                                     .getReferenceFromUrl(imageUrl)
-                            storageReference.downloadUrl.addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    val downloadUrl = task.result.toString()
+                            storageReference.downloadUrl.addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    val downloadUrl = it.result.toString()
                                     Glide.with(viewHolder.messageImageView.context)
                                             .load(downloadUrl)
                                             .into(viewHolder.messageImageView)
                                 } else {
                                     Log.w(TAG, "Getting download url was not successful.",
-                                            task.exception)
+                                            it.exception)
                                 }
                             }
                         } else {
@@ -236,7 +236,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                 // to the bottom of the list to show the newly added message.
                 if (friendlyMessageCount != null) {
                     if (lastVisiblePosition == -1 || positionStart >= friendlyMessageCount - 1 && lastVisiblePosition == positionStart - 1) {
-                        messageRecyclerView!!.scrollToPosition(positionStart)
+                        messageRecyclerView?.scrollToPosition(positionStart)
                     }
                 }
             }
@@ -284,7 +284,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
             override fun afterTextChanged(editable: Editable) {}
         })
 
-        addMessageImageView!!.setOnClickListener {
+        addMessageImageView.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "image/*"
@@ -407,7 +407,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         firebaseRemoteConfig?.fetch(cacheExpiration)
                 ?.addOnSuccessListener {
                     // Make the fetched config available via FirebaseRemoteConfig get<type> calls.
-                    firebaseRemoteConfig!!.activateFetched()
+                    firebaseRemoteConfig?.activateFetched()
                     applyRetrievedLengthLimit()
                 }
                 ?.addOnFailureListener { e ->
@@ -455,8 +455,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                 payload.putString(FirebaseAnalytics.Param.VALUE, "inv_sent")
 
                 // Check how many invitations were sent and log.
-                val ids = AppInviteInvitation.getInvitationIds(resultCode, data!!)
-                Log.d(TAG, "Invitations sent: " + ids.size)
+                val ids = data?.let { AppInviteInvitation.getInvitationIds(resultCode, it) }
+                Log.d(TAG, "Invitations sent: " + ids?.size)
             } else {
                 // Use Firebase Measurement to log that invitation was not sent
                 val payload = Bundle()
@@ -470,16 +470,18 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
     }
 
     private fun putImageInStorage(storageReference: StorageReference, uri: Uri?, key: String) {
-        storageReference.putFile(uri!!).addOnCompleteListener(this@MainActivity
-        ) {
-            if (it.isSuccessful) {
-                val message = Message("", username, photoUrl,
-                        it.result.downloadUrl.toString())
-                firebaseDatabaseReference?.child(MESSAGES_CHILD)?.child(key)
-                        ?.setValue(message)
-            } else {
-                Log.w(TAG, "Image upload task was not successful.",
-                        it.exception)
+        uri?.let {
+            storageReference.putFile(it).addOnCompleteListener(this@MainActivity
+            ) {
+                if (it.isSuccessful) {
+                    val message = Message("", username, photoUrl,
+                            it.result.downloadUrl.toString())
+                    firebaseDatabaseReference?.child(MESSAGES_CHILD)?.child(key)
+                            ?.setValue(message)
+                } else {
+                    Log.w(TAG, "Image upload task was not successful.",
+                            it.exception)
+                }
             }
         }
     }
