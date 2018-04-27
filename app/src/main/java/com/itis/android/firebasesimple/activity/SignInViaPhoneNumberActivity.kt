@@ -5,24 +5,17 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
-
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.itis.android.firebasesimple.R
-
+import kotlinx.android.synthetic.main.activity_sign_in_via_phone_number.*
 import java.util.concurrent.TimeUnit
 
 class SignInViaPhoneNumberActivity : AppCompatActivity() {
-
-    private var etPhoneNumber: EditText? = null
-    private var btnSignUp: Button? = null
-    private var btnBack: Button? = null
 
     private var firebaseAuth: FirebaseAuth? = null
 
@@ -35,16 +28,14 @@ class SignInViaPhoneNumberActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-        initFields()
         initClickListeners()
-
     }
 
     private fun initClickListeners() {
-        btnBack!!.setOnClickListener { v -> finish() }
+        btn_back!!.setOnClickListener { finish() }
 
-        btnSignUp!!.setOnClickListener { v ->
-            val phoneNumber = etPhoneNumber!!.text.toString()
+        btn_sign_up!!.setOnClickListener {
+            val phoneNumber = et_phone_number!!.text.toString()
             Log.d("Alm", "number: $phoneNumber")
             PhoneAuthProvider.getInstance().verifyPhoneNumber(
                     phoneNumber,
@@ -82,11 +73,11 @@ class SignInViaPhoneNumberActivity : AppCompatActivity() {
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         firebaseAuth!!.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    Log.d("Alm", "signInWithCredential:onComplete:" + task.isSuccessful)
+                .addOnCompleteListener(this) {
+                    Log.d("Alm", "signInWithCredential:onComplete:" + it.isSuccessful)
 
-                    if (!task.isSuccessful) {
-                        Log.w("Alm", "signInWithCredential ", task.exception)
+                    if (!it.isSuccessful) {
+                        Log.w("Alm", "signInWithCredential ", it.exception)
                         Toast.makeText(this@SignInViaPhoneNumberActivity, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
                     } else {
@@ -95,11 +86,5 @@ class SignInViaPhoneNumberActivity : AppCompatActivity() {
                         finish()
                     }
                 }
-    }
-
-    private fun initFields() {
-        etPhoneNumber = findViewById(R.id.et_phone_number)
-        btnSignUp = findViewById(R.id.btn_sign_up)
-        btnBack = findViewById(R.id.btn_back)
     }
 }

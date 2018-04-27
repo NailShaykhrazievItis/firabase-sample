@@ -33,13 +33,14 @@ import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
-import android.widget.*
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.ConnectionResult
@@ -61,20 +62,15 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.itis.android.firebasesimple.R
 import com.itis.android.firebasesimple.model.Message
-import com.itis.android.firebasesimple.utils.Preferences
+import com.itis.android.firebasesimple.utils.FRIENDLY_MSG_LENGTH
 import de.hdodenhof.circleimageview.CircleImageView
 import io.fabric.sdk.android.Fabric
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
 
-    private var sendButton: Button? = null
-    private var messageRecyclerView: RecyclerView? = null
     private var linearLayoutManager: LinearLayoutManager? = null
-    private var progressBar: ProgressBar? = null
-    private var messageEditText: EditText? = null
-    private var addMessageImageView: ImageView? = null
-    private var adView: AdView? = null
 
     private var firebaseAnalytics: FirebaseAnalytics? = null
     private var firebaseRemoteConfig: FirebaseRemoteConfig? = null
@@ -136,8 +132,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
                 .build()
 
-        progressBar = findViewById(R.id.progressBar)
-        messageRecyclerView = findViewById(R.id.messageRecyclerView)
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager!!.stackFromEnd = true
 
@@ -175,15 +169,15 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                     if (imageUrl!!.startsWith("gs://")) {
                         val storageReference = FirebaseStorage.getInstance()
                                 .getReferenceFromUrl(imageUrl)
-                        storageReference.downloadUrl.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val downloadUrl = task.result.toString()
+                        storageReference.downloadUrl.addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                val downloadUrl = it.result.toString()
                                 Glide.with(viewHolder.messageImageView.context)
                                         .load(downloadUrl)
                                         .into(viewHolder.messageImageView)
                             } else {
                                 Log.w(TAG, "Getting download url was not successful.",
-                                        task.exception)
+                                        it.exception)
                             }
                         }
                     } else {
@@ -233,7 +227,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         messageRecyclerView!!.adapter = firebaseAdapter
 
         // Initialize and request AdMob ad.
-        adView = findViewById(R.id.adView)
         val adRequest = AdRequest.Builder().build()
         adView!!.loadAd(adRequest)
 
@@ -260,9 +253,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
         // Fetch remote config.
         fetchConfig()
 
-        messageEditText = findViewById(R.id.messageEditText)
         messageEditText!!.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(sharedPreferences!!
-                .getInt(Preferences.FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT)))
+                .getInt(FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT)))
         messageEditText!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
@@ -277,15 +269,13 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
             override fun afterTextChanged(editable: Editable) {}
         })
 
-        addMessageImageView = findViewById(R.id.addMessageImageView)
-        addMessageImageView!!.setOnClickListener { view ->
+        addMessageImageView!!.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "image/*"
             startActivityForResult(intent, REQUEST_IMAGE)
         }
 
-        sendButton = findViewById(R.id.sendButton)
         sendButton!!.setOnClickListener { view ->
             val message = Message(messageEditText!!.text.toString(), username!!,
                     photoUrl, null)
@@ -352,15 +342,15 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.invite_menu -> {
                 sendInvitation()
-                return true
+                true
             }
             R.id.crash_menu -> {
                 Log.w("Crashlytics", "Crash button clicked")
                 causeCrash()
-                return true
+                true
             }
             R.id.sign_out_menu -> {
                 firebaseAuth!!.signOut()
@@ -370,13 +360,13 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
                 photoUrl = null
                 startActivity(Intent(this, SignInActivity::class.java))
                 finish()
-                return true
+                true
             }
             R.id.fresh_config_menu -> {
                 fetchConfig()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -466,15 +456,15 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedList
 
     private fun putImageInStorage(storageReference: StorageReference, uri: Uri?, key: String) {
         storageReference.putFile(uri!!).addOnCompleteListener(this@MainActivity
-        ) { task ->
-            if (task.isSuccessful) {
+        ) {
+            if (it.isSuccessful) {
                 val message = Message(null, username!!, photoUrl!!,
-                        task.result.downloadUrl!!.toString())
+                        it.result.downloadUrl!!.toString())
                 firebaseDatabaseReference!!.child(MESSAGES_CHILD).child(key)
                         .setValue(message)
             } else {
                 Log.w(TAG, "Image upload task was not successful.",
-                        task.exception)
+                        it.exception)
             }
         }
     }
