@@ -31,13 +31,14 @@ import com.itis.android.firebasesimple.activity.MainActivity
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         // Handle data payload of FCM messages.
-        Log.d(TAG, "FCM Message Id: " + remoteMessage!!.messageId!!)
-        Log.d(TAG, "FCM Notification Message: " + remoteMessage.notification!!)
+        Log.d(TAG, "FCM Message Id: " + remoteMessage.messageId)
+        Log.d(TAG, "FCM Notification Message: " + remoteMessage.notification)
         Log.d(TAG, "FCM Data Message: " + remoteMessage.data)
-
-        sendNotification(remoteMessage.notification!!.body)
+        remoteMessage.notification?.let {
+            sendNotification(remoteMessage.notification?.body)
+        }
     }
 
     private fun sendNotification(messageBody: String?) {
