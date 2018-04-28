@@ -17,25 +17,22 @@ import java.util.concurrent.TimeUnit
 
 class SignInViaPhoneNumberActivity : AppCompatActivity() {
 
-    private var firebaseAuth: FirebaseAuth? = null
+    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    private var verificationId: String? = null
     private var token: PhoneAuthProvider.ForceResendingToken? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in_via_phone_number)
 
-        firebaseAuth = FirebaseAuth.getInstance()
-
         initClickListeners()
     }
 
     private fun initClickListeners() {
-        btn_back!!.setOnClickListener { finish() }
+        btn_back.setOnClickListener { finish() }
 
-        btn_sign_up!!.setOnClickListener {
-            val phoneNumber = et_phone_number!!.text.toString()
+        btn_sign_up.setOnClickListener {
+            val phoneNumber = et_phone_number.text.toString()
             Log.d("Alm", "number: $phoneNumber")
             PhoneAuthProvider.getInstance().verifyPhoneNumber(
                     phoneNumber,
@@ -52,10 +49,9 @@ class SignInViaPhoneNumberActivity : AppCompatActivity() {
                             Log.e("Alm", e.toString())
                         }
 
-                        override fun onCodeSent(s: String?, forceResendingToken: PhoneAuthProvider.ForceResendingToken?) {
+                        override fun onCodeSent(s: String, forceResendingToken: PhoneAuthProvider.ForceResendingToken?) {
                             super.onCodeSent(s, forceResendingToken)
                             Log.d("Alm", "onCodeSent to $phoneNumber")
-                            verificationId = s
                             token = forceResendingToken
                             MaterialDialog.Builder(this@SignInViaPhoneNumberActivity)
                                     .title(R.string.write_code)
@@ -63,7 +59,7 @@ class SignInViaPhoneNumberActivity : AppCompatActivity() {
                                     .input(R.string.verification_code, R.string.empty) { dialog, input ->
                                         Log.d("Alm", "onInput")
                                         val credential = PhoneAuthProvider
-                                                .getCredential(verificationId!!, input.toString())
+                                                .getCredential(s, input.toString())
                                         signInWithPhoneAuthCredential(credential)
                                     }.show()
                         }
@@ -72,7 +68,7 @@ class SignInViaPhoneNumberActivity : AppCompatActivity() {
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        firebaseAuth!!.signInWithCredential(credential)
+        firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this) {
                     Log.d("Alm", "signInWithCredential:onComplete:" + it.isSuccessful)
 

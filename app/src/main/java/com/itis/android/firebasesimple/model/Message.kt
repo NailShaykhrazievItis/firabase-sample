@@ -16,7 +16,7 @@
 package com.itis.android.firebasesimple.model
 
 data class Message(var text: String? = null,
-                   var name: String? = null,
+                   var name: String = "",
                    var photoUrl: String? = null,
                    var imageUrl: String? = null,
                    var id: String? = null)

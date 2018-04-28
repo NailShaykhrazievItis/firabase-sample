@@ -19,14 +19,11 @@ import kotlinx.android.synthetic.main.activity_sign_up.*
  */
 class SignUpActivity : AppCompatActivity() {
 
-    private var auth: FirebaseAuth? = null
+    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
-
-        //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance()
 
         initClickListeners()
 
@@ -35,11 +32,11 @@ class SignUpActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        progressBar!!.visibility = View.GONE
+        progressBar.visibility = View.GONE
     }
 
     private fun initTextListeners() {
-        et_email!!.addTextChangedListener(object : TextWatcher {
+        et_email.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
             }
@@ -49,10 +46,10 @@ class SignUpActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable) {
-                ti_email!!.error = null
+                ti_email.error = null
             }
         })
-        et_password!!.addTextChangedListener(object : TextWatcher {
+        et_password.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
             }
@@ -62,42 +59,42 @@ class SignUpActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable) {
-                ti_password!!.error = null
+                ti_password.error = null
             }
         })
     }
 
     private fun initClickListeners() {
-        btn_to_signin!!.setOnClickListener { v -> finish() }
+        btn_to_signin.setOnClickListener { v -> finish() }
 
-        btn_signup!!.setOnClickListener { v ->
-            val email = et_email!!.text.toString().trim { it <= ' ' }
-            val password = et_password!!.text.toString().trim { it <= ' ' }
+        btn_signup.setOnClickListener { v ->
+            val email = et_email.text.toString().trim { it <= ' ' }
+            val password = et_password.text.toString().trim { it <= ' ' }
             if (TextUtils.isEmpty(email)) {
-                ti_email!!.error = getString(R.string.error_email)
+                ti_email.error = getString(R.string.error_email)
                 return@setOnClickListener
             }
             if (TextUtils.isEmpty(password)) {
-                ti_password!!.error = getString(R.string.error_pass)
+                ti_password.error = getString(R.string.error_pass)
                 return@setOnClickListener
             }
             if (password.length < 6) {
-                ti_password!!.error = getString(R.string.error_pass_length)
+                ti_password.error = getString(R.string.error_pass_length)
                 return@setOnClickListener
             }
-            progressBar!!.visibility = View.VISIBLE
-            SoftKeyboard.hide(container!!)
+            progressBar.visibility = View.VISIBLE
+            SoftKeyboard.hide(container)
             //create user
-            auth!!.createUserWithEmailAndPassword(email, password)
+            auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this@SignUpActivity) {
                         Toast.makeText(this@SignUpActivity,
                                 "createUserWithEmail:onComplete:" + it.isSuccessful, Toast.LENGTH_SHORT).show()
-                        progressBar!!.visibility = View.GONE
+                        progressBar.visibility = View.GONE
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!it.isSuccessful) {
-                            Snackbar.make(container!!, "Authentication failed." + it.exception!!, Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(container, "Authentication failed." + it.exception, Snackbar.LENGTH_SHORT).show()
                         } else {
                             startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
                             finish()
