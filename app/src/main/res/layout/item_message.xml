@@ -1,50 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:orientation="vertical">
+    android:paddingStart="16dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="8dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_messenger"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_account_circle_black_36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/messengerImageView"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_account_circle_black_36dp" />
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/iv_messenger"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Message" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+    <ImageView
+        android:id="@+id/iv_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:adjustViewBounds="true"
+        android:background="@color/colorPrimary"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_messenger"
+        app:layout_constraintTop_toBottomOf="@id/tv_message"
+        tools:ignore="ContentDescription" />
 
-            <TextView
-                android:id="@+id/messageTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/tv_messenger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/iv_messenger"
+        app:layout_constraintTop_toBottomOf="@id/iv_message"
+        tools:text="Messenger" />
 
-            <ImageView
-                android:id="@+id/messageImageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:background="@color/colorPrimary"
-                android:scaleType="fitCenter" />
-
-            <TextView
-                android:id="@+id/messengerTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-        </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
