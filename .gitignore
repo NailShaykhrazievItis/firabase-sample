@@ -13,8 +13,6 @@ gen-external-apklibs/**
 # Gradle generated files
 .gradle/
 build/**
-/gradlew
-/gradlew.bat
 
 # Signing files
 .signing/
@@ -26,3 +24,4 @@ build/**
 *.iws
 classes/**
 target/**
+/gradle.properties
