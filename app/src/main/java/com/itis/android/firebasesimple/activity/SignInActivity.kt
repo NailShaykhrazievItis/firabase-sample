@@ -97,6 +97,7 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
             progressBar.visibility = View.VISIBLE
             SoftKeyboard.hide(container)
 
+            firebaseAuth?.sendPasswordResetEmail("")
             //authenticate user
             firebaseAuth?.signInWithEmailAndPassword(email, password)
                     ?.addOnCompleteListener(this@SignInActivity) { task ->

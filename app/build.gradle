@@ -6,7 +6,7 @@ apply plugin: 'io.fabric'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.itis.android.firebasesimple"
+        applicationId "ru.kpfu.itis.android.dev"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
