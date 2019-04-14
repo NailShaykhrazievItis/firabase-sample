@@ -99,7 +99,6 @@
     <string name="status_link_found">Link received, enter email to sign in.</string>
 
     <string name="phone_title_text">Phone Number</string>
-
     <string name="twitter_status_fmt">Twitter User: %s</string>
     <string name="twitter_title_text">Twitter Login</string>
 
