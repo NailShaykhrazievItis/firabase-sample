@@ -28,9 +28,7 @@ import java.util.concurrent.TimeUnit
 
 class PhoneAuthActivity : AppCompatActivity(), View.OnClickListener {
 
-    // [START declare_auth]
     private lateinit var auth: FirebaseAuth
-    // [END declare_auth]
 
     private var verificationInProgress = false
     private var storedVerificationId: String? = ""
@@ -41,108 +39,79 @@ class PhoneAuthActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_phone_auth)
 
-        // Restore instance state
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState)
         }
 
-        // Assign click listeners
         buttonStartVerification.setOnClickListener(this)
         buttonVerifyPhone.setOnClickListener(this)
         buttonResend.setOnClickListener(this)
         signOutButton.setOnClickListener(this)
 
-        // [START initialize_auth]
-        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
-        // [END initialize_auth]
 
-        // Initialize phone auth callbacks
-        // [START phone_auth_callbacks]
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                // This callback will be invoked in two situations:
-                // 1 - Instant verification. In some cases the phone number can be instantly
-                //     verified without needing to send or enter a verification code.
-                // 2 - Auto-retrieval. On some devices Google Play services can automatically
-                //     detect the incoming verification SMS and perform verification without
-                //     user action.
                 Log.d(TAG, "onVerificationCompleted:$credential")
-                // [START_EXCLUDE silent]
-                verificationInProgress = false
-                // [END_EXCLUDE]
 
-                // [START_EXCLUDE silent]
-                // Update the UI and attempt sign in with the phone credential
+                verificationInProgress = false
+
                 updateUI(STATE_VERIFY_SUCCESS, credential)
-                // [END_EXCLUDE]
+
                 signInWithPhoneAuthCredential(credential)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                // This callback is invoked in an invalid request for verification is made,
-                // for instance if the the phone number format is not valid.
+
                 Log.w(TAG, "onVerificationFailed", e)
-                // [START_EXCLUDE silent]
+
                 verificationInProgress = false
-                // [END_EXCLUDE]
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
-                    // Invalid request
-                    // [START_EXCLUDE]
+
                     fieldPhoneNumber.error = "Invalid phone number."
-                    // [END_EXCLUDE]
+
                 } else if (e is FirebaseTooManyRequestsException) {
-                    // The SMS quota for the project has been exceeded
-                    // [START_EXCLUDE]
+
                     Snackbar.make(findViewById(android.R.id.content), "Quota exceeded.",
                             Snackbar.LENGTH_SHORT).show()
-                    // [END_EXCLUDE]
                 }
 
                 // Show a message and update the UI
-                // [START_EXCLUDE]
+
                 updateUI(STATE_VERIFY_FAILED)
-                // [END_EXCLUDE]
+
             }
 
             override fun onCodeSent(
                     verificationId: String?,
                     token: PhoneAuthProvider.ForceResendingToken
             ) {
-                // The SMS verification code has been sent to the provided phone number, we
-                // now need to ask the user to enter the code and then construct a credential
-                // by combining the code with a verification ID.
+                // The SMS verification code has been sent to the provided phone number
                 Log.d(TAG, "onCodeSent:" + verificationId!!)
 
-                // Save verification ID and resending token so we can use them later
                 storedVerificationId = verificationId
                 resendToken = token
 
-                // [START_EXCLUDE]
-                // Update UI
                 updateUI(STATE_CODE_SENT)
-                // [END_EXCLUDE]
+
             }
         }
-        // [END phone_auth_callbacks]
     }
 
-    // [START on_start_check_user]
     public override fun onStart() {
         super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
+
         val currentUser = auth.currentUser
         updateUI(currentUser)
 
-        // [START_EXCLUDE]
+
         if (verificationInProgress && validatePhoneNumber()) {
             startPhoneNumberVerification(fieldPhoneNumber.text.toString())
         }
-        // [END_EXCLUDE]
+
     }
-    // [END on_start_check_user]
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -168,56 +137,49 @@ class PhoneAuthActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun verifyPhoneNumberWithCode(verificationId: String?, code: String) {
-        // [START verify_with_code]
+
         val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
-        // [END verify_with_code]
+
         signInWithPhoneAuthCredential(credential)
     }
 
-    // [START resend_verification]
+
     private fun resendVerificationCode(
             phoneNumber: String,
             token: PhoneAuthProvider.ForceResendingToken?
     ) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                phoneNumber, // Phone number to verify
-                60, // Timeout duration
-                TimeUnit.SECONDS, // Unit of timeout
-                this, // Activity (for callback binding)
-                callbacks, // OnVerificationStateChangedCallbacks
-                token) // ForceResendingToken from callbacks
+                phoneNumber,
+                60,
+                TimeUnit.SECONDS,
+                this,
+                callbacks,
+                token)
     }
-    // [END resend_verification]
 
-    // [START sign_in_with_phone]
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
+
                         Log.d(TAG, "signInWithCredential:success")
 
                         val user = task.result?.user
-                        // [START_EXCLUDE]
+
                         updateUI(STATE_SIGNIN_SUCCESS, user)
-                        // [END_EXCLUDE]
+
                     } else {
-                        // Sign in failed, display a message and update the UI
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                         if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                            // The verification code entered was invalid
-                            // [START_EXCLUDE silent]
+
                             fieldVerificationCode.error = "Invalid code."
-                            // [END_EXCLUDE]
+
                         }
-                        // [START_EXCLUDE silent]
-                        // Update UI
                         updateUI(STATE_SIGNIN_FAILED)
-                        // [END_EXCLUDE]
+
                     }
                 }
     }
-    // [END sign_in_with_phone]
 
     private fun signOut() {
         auth.signOut()
@@ -249,7 +211,7 @@ class PhoneAuthActivity : AppCompatActivity(), View.OnClickListener {
                 detail.text = null
             }
             STATE_CODE_SENT -> {
-                // Code sent state, show the verification field, the
+                // Code sent state, show the verification field
                 enableViews(buttonVerifyPhone, buttonResend, fieldPhoneNumber, fieldVerificationCode)
                 disableViews(buttonStartVerification)
                 detail.setText(R.string.status_code_sent)
@@ -276,11 +238,10 @@ class PhoneAuthActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             STATE_SIGNIN_FAILED ->
-                // No-op, handled by sign-in check
                 detail.setText(R.string.status_sign_in_failed)
             STATE_SIGNIN_SUCCESS -> {
             }
-        } // Np-op, handled by sign-in check
+        }
 
         if (user == null) {
             // Signed out
