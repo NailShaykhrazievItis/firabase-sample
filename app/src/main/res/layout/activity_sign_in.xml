@@ -91,6 +91,18 @@
             android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_to_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@null"
+            android:text="@string/btn_link_to_search"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp" />
+
     </LinearLayout>
 
     <ProgressBar

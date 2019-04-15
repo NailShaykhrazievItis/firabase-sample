@@ -35,4 +35,12 @@
     <string name="status_sign_in_failed">sign in failed</string>
     <string name="status_verification_failed">verification failed</string>
     <string name="status_code_sent">code sent</string>
+    <string name="btn_link_to_search">Search</string>
+    <string name="search_heading">Search</string>
+    <string name="hint_surname">Surname</string>
+    <string name="hint_name">Name</string>
+    <string name="add">add</string>
+    <string name="hint_search">Search</string>
+    <string name="search">Search</string>
+    <string name="search_error">Can\'t find user with this name</string>
 </resources>

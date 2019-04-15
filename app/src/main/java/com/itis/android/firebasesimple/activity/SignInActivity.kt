@@ -118,6 +118,10 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
                         }
                     }
         }
+        btn_to_search.setOnClickListener {
+            val intent = Intent(this,StorageActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initGoogleAuth() {
