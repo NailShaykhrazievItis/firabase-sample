@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements
             if (firebaseUser.getPhotoUrl() != null) {
                 photoUrl = firebaseUser.getPhotoUrl().toString();
             }
-            if (username == null) {
+            if (username.isEmpty()) {
                 username = firebaseUser.getEmail();
             }
         }

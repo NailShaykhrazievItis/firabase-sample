@@ -75,6 +75,13 @@
             android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_auth_with_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:text="@string/phone_auth" />
     </LinearLayout>
 
     <ProgressBar

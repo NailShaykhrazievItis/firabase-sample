@@ -65,6 +65,9 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun initClickListeners() {
         btn_to_signin.setOnClickListener { finish() }
+        btn_auth_with_phone.setOnClickListener {
+            startActivity(Intent(this@SignUpActivity, PhoneAuthActivity::class.java))
+        }
         btn_signup.setOnClickListener {
             val email = email.text.toString().trim { it <= ' ' }
             val password = password.text.toString().trim { it <= ' ' }
