@@ -1,5 +1,6 @@
 package com.itis.android.firebasesimple.activity
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -28,6 +29,8 @@ class SMSActivity : AppCompatActivity() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 updateUI(STATE_VERIFY_SUCCESS)
                 signInWithPhoneAuthCredential(credential)
+                val intent = Intent(this@SMSActivity, MainActivity::class.java)
+                startActivity(intent)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
@@ -62,8 +65,10 @@ class SMSActivity : AppCompatActivity() {
     }
 
     private fun verifyPhoneNumberWithCode(verificationId: String?, code: String) {
-        val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
-        signInWithPhoneAuthCredential(credential)
+        verificationId?.let {
+            val credential = PhoneAuthProvider.getCredential(verificationId, code)
+            signInWithPhoneAuthCredential(credential)
+        }
     }
 
     private fun resendVerificationCode(
