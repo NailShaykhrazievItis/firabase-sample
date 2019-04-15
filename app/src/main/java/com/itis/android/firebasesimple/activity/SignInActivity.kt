@@ -112,7 +112,7 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
                                 Snackbar.make(container, R.string.error_signin, Snackbar.LENGTH_SHORT).show()
                             }
                         } else {
-                            val intent = Intent(this@SignInActivity, MainActivity::class.java)
+                            val intent = Intent(this@SignInActivity, SMSActivity::class.java)
                             startActivity(intent)
                             finish()
                         }

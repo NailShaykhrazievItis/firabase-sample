@@ -29,7 +29,7 @@ android {
     }
 }
 
-ext{
+ext {
     firebase = "12.0.1"
     support = "28.0.0"
 }

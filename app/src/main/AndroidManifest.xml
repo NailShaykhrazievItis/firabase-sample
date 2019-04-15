@@ -11,6 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.SMSActivity"></activity>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
@@ -24,7 +26,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -37,9 +38,7 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-
         <activity android:name=".activity.SignInActivity" />
-
         <activity android:name=".activity.SignUpActivity" />
 
         <service
@@ -52,8 +51,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7281450262111610~1284421779"/>
-
+            android:value="ca-app-pub-7281450262111610~1284421779" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="b1c12a468344b719d929ab7ff88a7f6d812a199e" />
