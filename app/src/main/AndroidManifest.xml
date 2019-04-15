@@ -43,6 +43,7 @@
         <activity android:name=".activity.SignUpActivity" />
         <activity android:name=".activity.PhoneAuthActivity" />
         <activity android:name=".activity.EmailActivity" />
+        <activity android:name=".activity.PasswordResetActivity" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"
