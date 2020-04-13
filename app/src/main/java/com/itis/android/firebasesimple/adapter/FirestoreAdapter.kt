@@ -1,12 +1,12 @@
 package com.itis.android.firebasesimple.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import com.google.firebase.firestore.*
 
-abstract class FirestoreAdapter<VH : RecyclerView.ViewHolder>(private var query: Query?) :
-        RecyclerView.Adapter<VH>(),
-        EventListener<QuerySnapshot> {
+abstract class FirestoreAdapter<VH : RecyclerView.ViewHolder>(
+        private var query: Query?
+) : RecyclerView.Adapter<VH>(), EventListener<QuerySnapshot> {
 
     private var registration: ListenerRegistration? = null
 

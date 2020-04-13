@@ -3,14 +3,13 @@ package com.itis.android.firebasesimple.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -18,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -136,7 +136,7 @@ class SignInActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLi
         if (authResult != null) {
             // Welcome the user
             val user = authResult.user
-            Toast.makeText(this, "Welcome ${user.email}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Welcome ${user?.email}", Toast.LENGTH_SHORT).show()
 
             // Go back to the main activity
             startActivity(Intent(this, MainActivity::class.java))
