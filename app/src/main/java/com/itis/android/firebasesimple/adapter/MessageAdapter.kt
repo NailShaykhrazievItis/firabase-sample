@@ -1,13 +1,13 @@
 package com.itis.android.firebasesimple.adapter
 
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -24,10 +24,8 @@ class MessageAdapter(
         query: Query
 ) : FirestoreAdapter<MessageAdapter.MessageViewHolder>(query) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return MessageViewHolder(inflater.inflate(R.layout.item_message, parent, false))
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder =
+            MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false))
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         holder.bind(getSnapshot(position))
@@ -68,18 +66,23 @@ class MessageAdapter(
             } else {
                 message.imageUrl?.also { imageUrl ->
                     if (imageUrl.startsWith("https://firebasestorage")) {
-                        val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
-                        storageReference.downloadUrl
-                                .addOnSuccessListener {
-                                    it?.let {
-                                        Glide.with(itemView.context)
-                                                .load(it)
-                                                .into(iv_message)
+                        try {
+                            val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+                            storageReference.downloadUrl
+                                    .addOnSuccessListener {
+                                        it?.let {
+                                            Glide.with(itemView.context)
+                                                    .load(it)
+                                                    .into(iv_message)
+                                        }
                                     }
-                                }
-                                .addOnFailureListener {
-                                    Log.w("Adapter", "Getting download url was not successful.", it)
-                                }
+                                    .addOnFailureListener {
+                                        Log.w("Adapter", "Getting download url was not successful.", it)
+                                    }
+                        } catch (ex: Exception) {
+                            Log.e("Adapter", "$ex")
+                        }
+
                     } else {
                         Glide.with(itemView.context)
                                 .load(message.imageUrl)

@@ -5,10 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -21,7 +17,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -31,6 +31,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -46,8 +47,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import io.fabric.sdk.android.Fabric;
 
 import static com.itis.android.firebasesimple.utils.ConstantsKt.ANONYMOUS;
 import static com.itis.android.firebasesimple.utils.ConstantsKt.DEFAULT_MSG_LENGTH_LIMIT;
@@ -89,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Fabric.with(this, new Crashlytics());
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = ANONYMOUS;
@@ -136,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements
         FirebaseRemoteConfigSettings firebaseRemoteConfigSettings =
                 new FirebaseRemoteConfigSettings.Builder()
                         .setMinimumFetchIntervalInSeconds(5)
-                        .setDeveloperModeEnabled(true)
                         .build();
         // Define default config values. Defaults are used when fetched config values are not
         // available. Eg: if an error occurred fetching values from the server.
@@ -144,8 +141,10 @@ public class MainActivity extends AppCompatActivity implements
         defaultConfigMap.put("friendly_msg_length", 10L);
 
         // Apply config settings and default values.
-        firebaseRemoteConfig.setConfigSettings(firebaseRemoteConfigSettings);
-        firebaseRemoteConfig.setDefaults(defaultConfigMap);
+//        firebaseRemoteConfig.
+        firebaseRemoteConfig.setConfigSettingsAsync(firebaseRemoteConfigSettings);
+        firebaseRemoteConfig.setDefaultsAsync(defaultConfigMap);
+
         // Fetch remote config.
         fetchConfig();
     }
@@ -248,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void causeCrash() {
-        throw new NullPointerException("Fake null pointer exception");
+        throw new RuntimeException("Test Crash");
     }
 
     private void sendInvitation() {
@@ -262,16 +261,8 @@ public class MainActivity extends AppCompatActivity implements
 
     // Fetch the config to determine the allowed length of messages.
     public void fetchConfig() {
-        long cacheExpiration = 3600; // 1 hour in seconds
-        // If developer mode is enabled reduce cacheExpiration to 0 so that each fetch goes to the
-        // server. This should not be used in release builds.
-        if (firebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = 0;
-        }
-        firebaseRemoteConfig.fetch(cacheExpiration)
+        firebaseRemoteConfig.fetchAndActivate()
                 .addOnSuccessListener(aVoid -> {
-                    // Make the fetched config available via FirebaseRemoteConfig get<type> calls.
-                    firebaseRemoteConfig.activateFetched();
                     applyRetrievedLengthLimit();
                 })
                 .addOnFailureListener(e -> {
@@ -345,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements
                                 .set(message);
                     });
                 })
-                .addOnFailureListener(error->{
+                .addOnFailureListener(error -> {
                     Log.w(TAG, "Image upload task was not successful.",
                             error);
                 });
@@ -374,7 +365,9 @@ public class MainActivity extends AppCompatActivity implements
         sendButton.setOnClickListener(view -> {
             Message message = new Message(messageEditText.getText().toString(), username,
                     photoUrl, null);
-            messagesRef.add(message);
+            messagesRef.add(message).addOnCompleteListener(documentReference -> {
+
+            });
             messageEditText.setText("");
             firebaseAnalytics.logEvent(MESSAGE_SENT_EVENT, null);
         });
