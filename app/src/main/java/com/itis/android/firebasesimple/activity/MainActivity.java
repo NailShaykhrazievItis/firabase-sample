@@ -1,5 +1,6 @@
 package com.itis.android.firebasesimple.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements
     private String photoUrl;
     private SharedPreferences sharedPreferences;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements
             if (firebaseUser.getPhotoUrl() != null) {
                 photoUrl = firebaseUser.getPhotoUrl().toString();
             }
-            if (username.isEmpty()) {
+            if (username != null && username.isEmpty()) {
                 username = firebaseUser.getEmail();
             }
         }
@@ -164,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements
         firestore = FirebaseFirestore.getInstance();
         CollectionReference messagesRef = firestore.collection(MESSAGES_CHILD);
         Query query = messagesRef.limit(50);
-        firebaseAdapter = new MessageAdapter(query);
+        firebaseAdapter = new MessageAdapter(query, Glide.with(this));
 
         firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override

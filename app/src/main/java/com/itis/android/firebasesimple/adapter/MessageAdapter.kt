@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentSnapshot
@@ -21,7 +22,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_message.*
 
 class MessageAdapter(
-        query: Query
+        query: Query,
+        private val requestManager: RequestManager
 ) : FirestoreAdapter<MessageAdapter.MessageViewHolder>(query) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder =
@@ -49,7 +51,7 @@ class MessageAdapter(
         private fun showMessenger(message: Message) {
             tv_messenger.text = message.name
             message.photoUrl?.let {
-                Glide.with(itemView.context)
+               requestManager
                         .load(it)
                         .into(iv_messenger)
             } ?: run {
@@ -71,7 +73,7 @@ class MessageAdapter(
                             storageReference.downloadUrl
                                     .addOnSuccessListener {
                                         it?.let {
-                                            Glide.with(itemView.context)
+                                           requestManager
                                                     .load(it)
                                                     .into(iv_message)
                                         }
@@ -84,7 +86,7 @@ class MessageAdapter(
                         }
 
                     } else {
-                        Glide.with(itemView.context)
+                       requestManager
                                 .load(message.imageUrl)
                                 .into(iv_message)
                     }
